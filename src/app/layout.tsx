@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import { Navbar } from "@/components/Navbar";
+import { ScrollProgress } from "@/components/ui/ScrollProgress";
+import { PageLoader } from "@/components/ui/PageLoader";
 import { SITE } from "@/lib/constants";
 
 const geistSans = Geist({
@@ -58,6 +60,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-void text-ink">
+        <PageLoader />
+        <ScrollProgress />
         <SmoothScroll />
         <Navbar />
         <main id="content">{children}</main>

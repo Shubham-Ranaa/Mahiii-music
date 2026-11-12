@@ -19,6 +19,8 @@ export const SITE = {
 export const DOWNLOAD_URL: string =
   process.env.NEXT_PUBLIC_MAHII_DOWNLOAD_URL?.trim() || "#download";
 
+export const DOWNLOAD_SECTION_ID = "#download";
+
 export const IS_EXTERNAL_DOWNLOAD = DOWNLOAD_URL.startsWith("http");
 
 export const NAV_LINKS = [
@@ -27,6 +29,7 @@ export const NAV_LINKS = [
   { label: "Listen Together", href: "#listen-together" },
   { label: "About", href: "#about" },
   { label: "Roadmap", href: "#roadmap" },
+  { label: "FAQ", href: "#faq" },
 ] as const;
 
 export const SOCIALS = {

@@ -89,16 +89,16 @@ export function Footer() {
         </div>
 
         {/* ---------------- Open-source credits ---------------- */}
-        <div className="mt-14 rounded-xl border border-white/[0.07] bg-void/40">
+        <div className="mt-14 rounded-2xl border border-white/[0.07] bg-void/40 p-1">
           <button
             type="button"
             onClick={() => setCreditsOpen((v) => !v)}
             aria-expanded={creditsOpen}
             aria-controls="credits-panel"
-            className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+            className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left rounded-2xl transition-colors duration-300 hover:bg-white/[0.02]"
           >
             <span className="flex flex-col gap-1">
-              <span className="text-[0.8125rem] font-medium text-ink">
+              <span className="text-[0.8125rem] font-medium tracking-tight text-ink">
                 Open-source acknowledgements &amp; license
               </span>
               <span className="text-[0.6875rem] text-ink-muted">
@@ -128,7 +128,7 @@ export function Footer() {
                 <p className="max-w-[70ch] text-[0.8125rem] leading-relaxed text-ink-soft">
                   {CREDITS.summary}
                 </p>
-                <p className="text-[0.8125rem] leading-relaxed text-ink-soft">
+                <p className="text-[0.8125rem] leading-relaxed text-ink">
                   {CREDITS.license}
                 </p>
                 <p className="max-w-[70ch] text-[0.8125rem] leading-relaxed text-ink-soft">
@@ -168,16 +168,25 @@ export function Footer() {
         </div>
 
         <div className="mt-10 flex flex-col gap-3 border-t border-white/[0.07] pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-[0.75rem] text-ink-muted">MAHII © 2026</p>
+          <div className="flex items-center gap-3">
+            <p className="text-[0.75rem] text-ink-muted">MAHII © 2026</p>
+            <span className="h-1 w-1 rounded-full bg-white/20" />
+            <span className="flex items-center gap-1.5 text-[0.6875rem] text-emerald-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              v2.4 Beta
+            </span>
+          </div>
+
           <p className="text-[0.75rem] text-ink-muted">
-            Built by{" "}
+            Crafted with passion by{" "}
             <a
               href={SOCIALS.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-ink-soft transition-colors hover:text-ink"
+              className="inline-flex items-center gap-1 text-lavender transition-colors hover:underline"
             >
               Harsh
+              <GithubIcon size={12} className="inline-block" />
             </a>
           </p>
         </div>

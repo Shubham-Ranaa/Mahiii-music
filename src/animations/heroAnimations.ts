@@ -18,6 +18,18 @@ export function useHeroAnimation() {
       const q = gsap.utils.selector(scope);
 
       if (reduced) {
+        gsap.set(q("[data-hero-glow], [data-hero-wordmark], [data-hero-line] > span, [data-hero-fade], [data-hero-phone], [data-hero-art], [data-hero-scroll]"), {
+          opacity: 1,
+          y: 0,
+          yPercent: 0,
+          scale: 1,
+          rotate: 0,
+          clearProps: "transform",
+        });
+        return;
+      }
+
+      if (reduced) {
         gsap.set(q("[data-hero-fade], [data-hero-line] > span"), {
           opacity: 1,
           y: 0,
@@ -84,6 +96,7 @@ export function useHeroAnimation() {
 export function useMouseParallax(
   scope: React.RefObject<HTMLElement | null>,
   enabled: boolean,
+  active: boolean,
 ) {
   useGSAP(
     () => {
@@ -97,14 +110,14 @@ export function useMouseParallax(
 
       const setters = layers.map((layer) => ({
         depth: Number(layer.dataset.parallax) || 1,
-        x: gsap.quickTo(layer, "x", { duration: 0.9, ease: "power2.out" }),
-        y: gsap.quickTo(layer, "y", { duration: 0.9, ease: "power2.out" }),
+        x: gsap.quickTo(layer, "x", { duration: 0.8, ease: "power2.out" }),
+        y: gsap.quickTo(layer, "y", { duration: 0.8, ease: "power2.out" }),
         rx: gsap.quickTo(layer, "rotateX", {
-          duration: 1.1,
+          duration: 1,
           ease: "power2.out",
         }),
         ry: gsap.quickTo(layer, "rotateY", {
-          duration: 1.1,
+          duration: 1,
           ease: "power2.out",
         }),
       }));
@@ -115,10 +128,15 @@ export function useMouseParallax(
         const ny = (event.clientY - rect.top) / rect.height - 0.5;
 
         setters.forEach((s) => {
-          s.x(nx * 26 * s.depth);
-          s.y(ny * 20 * s.depth);
-          s.rx(-ny * 5 * s.depth);
-          s.ry(nx * 6 * s.depth);
+          const tx = nx * 22 * s.depth;
+          const ty = ny * 16 * s.depth;
+          const trx = -ny * 4.5 * s.depth;
+          const try_ = nx * 5 * s.depth;
+
+          s.x(tx);
+          s.y(ty);
+          s.rx(trx);
+          s.ry(try_);
         });
       };
 
@@ -139,6 +157,6 @@ export function useMouseParallax(
         el.removeEventListener("pointerleave", onLeave);
       };
     },
-    { scope, dependencies: [enabled] },
+    { scope, dependencies: [enabled, active] },
   );
 }

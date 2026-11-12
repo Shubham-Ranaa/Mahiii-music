@@ -1,5 +1,9 @@
+"use client";
+
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { AlbumArtwork } from "./AlbumArtwork";
+import { Heart, Play, Pause, Plus } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
 /* Shared bits                                                         */
@@ -39,22 +43,39 @@ function MiniBars({ count = 12 }: { count?: number }) {
   );
 }
 
-function Transport({ compact = false }: { compact?: boolean }) {
+function Transport({
+  compact = false,
+  isPlaying = true,
+  onToggle,
+}: {
+  compact?: boolean;
+  isPlaying?: boolean;
+  onToggle?: () => void;
+}) {
   return (
     <div className="flex items-center justify-center gap-6 text-white/85">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
         <path d="M6 5h2v14H6zM20 5v14l-11-7z" />
       </svg>
-      <span
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-label={isPlaying ? "Pause" : "Play"}
         className={cn(
-          "grid place-items-center rounded-full bg-white text-black",
+          "grid place-items-center rounded-full bg-white text-black transition-transform active:scale-95 shadow-md",
           compact ? "h-9 w-9" : "h-11 w-11",
         )}
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-          <path d="M7 4h3v16H7zM14 4h3v16h-3z" />
-        </svg>
-      </span>
+        {isPlaying ? (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <path d="M7 4h3v16H7zM14 4h3v16h-3z" />
+          </svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden className="translate-x-0.5">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        )}
+      </button>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
         <path d="M16 5h2v14h-2zM4 5v14l11-7z" />
       </svg>
@@ -67,31 +88,52 @@ function Transport({ compact = false }: { compact?: boolean }) {
 /* ------------------------------------------------------------------ */
 
 export function NowPlayingScreen() {
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [liked, setLiked] = useState(false);
+
   return (
-    <div className="flex h-full flex-col bg-gradient-to-b from-[#1a1226] via-[#0d0b14] to-[#08080c]">
+    <div className="flex h-full flex-col bg-gradient-to-b from-[#1a1226] via-[#0d0b14] to-[#08080c] select-none">
       <StatusBar />
       <div className="px-4 pt-2">
         <div className="flex items-center justify-between text-[0.5625rem] uppercase tracking-[0.2em] text-white/40">
           <span>Playing now</span>
-          <span className="text-violet-core">Hi-Fi</span>
+          <span className="text-violet-core font-semibold">Hi-Fi Audio</span>
         </div>
       </div>
 
       <div className="px-4 pt-4">
-        <AlbumArtwork
-          tone="dusk"
-          title="Midnight Bloom"
-          variant={0}
-          rounded="rounded-[1.1rem]"
-          className="aspect-square w-full shadow-[0_24px_60px_-20px_rgba(168,85,247,0.55)]"
-        />
+        <div className="relative aspect-square w-full">
+          <div
+            className={cn(
+              "absolute -inset-2 rounded-2xl opacity-60 blur-md transition-opacity duration-500",
+              isPlaying ? "bg-violet-core/40 opacity-80" : "opacity-0",
+            )}
+          />
+          <AlbumArtwork
+            tone="dusk"
+            title="Midnight Bloom"
+            variant={0}
+            rounded="rounded-[1.1rem]"
+            className="aspect-square w-full shadow-[0_24px_60px_-20px_rgba(168,85,247,0.55)] ring-1 ring-white/10"
+          />
+        </div>
       </div>
 
-      <div className="px-5 pt-4">
-        <p className="truncate text-[0.9375rem] font-semibold tracking-tight text-white">
-          Midnight Bloom
-        </p>
-        <p className="truncate text-[0.6875rem] text-white/45">Aria Vale</p>
+      <div className="px-5 pt-4 flex items-center justify-between">
+        <div className="min-w-0">
+          <p className="truncate text-[0.9375rem] font-semibold tracking-tight text-white">
+            Midnight Bloom
+          </p>
+          <p className="truncate text-[0.6875rem] text-white/45">Aria Vale</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setLiked(!liked)}
+          aria-label="Like song"
+          className="text-white/60 hover:text-white"
+        >
+          <Heart size={16} className={liked ? "fill-rose-500 text-rose-500" : ""} />
+        </button>
       </div>
 
       <div className="px-5 pt-3">
@@ -105,11 +147,11 @@ export function NowPlayingScreen() {
       </div>
 
       <div className="mt-auto px-5 pb-4">
-        <Transport />
+        <Transport isPlaying={isPlaying} onToggle={() => setIsPlaying(!isPlaying)} />
         <div className="mt-4 flex items-center justify-between">
           <MiniBars count={14} />
           <span className="text-[0.5rem] uppercase tracking-[0.18em] text-white/35">
-            Queue
+            Queue · Synced
           </span>
         </div>
       </div>
@@ -118,23 +160,24 @@ export function NowPlayingScreen() {
 }
 
 export function LyricsScreen() {
+  const [activeIdx, setActiveIdx] = useState(2);
   const lines = [
-    { t: "City lights are fading slow", active: false },
-    { t: "and the record starts to spin", active: false },
-    { t: "I keep your voice on repeat", active: true },
-    { t: "like a song I let begin", active: false },
-    { t: "every hour, every echo", active: false },
+    "City lights are fading slow",
+    "and the record starts to spin",
+    "I keep your voice on repeat",
+    "like a song I let begin",
+    "every hour, every echo",
   ];
 
   return (
-    <div className="flex h-full flex-col bg-gradient-to-b from-[#141020] to-[#08080c]">
+    <div className="flex h-full flex-col bg-gradient-to-b from-[#141020] to-[#08080c] select-none">
       <StatusBar />
       <div className="flex items-center justify-between px-4 pt-2">
         <span className="text-[0.5625rem] uppercase tracking-[0.2em] text-white/40">
           Lyrics
         </span>
-        <span className="rounded-full bg-violet-core/15 px-2 py-0.5 text-[0.5rem] font-medium text-lavender">
-          Synced
+        <span className="rounded-full bg-violet-core/20 px-2 py-0.5 text-[0.5rem] font-medium text-lavender">
+          Synchronized
         </span>
       </div>
 
@@ -155,24 +198,29 @@ export function LyricsScreen() {
       </div>
 
       <div className="mt-5 flex-1 space-y-3.5 px-5">
-        {lines.map((line, i) => (
-          <p
+        {lines.map((text, i) => (
+          <button
             key={i}
+            type="button"
+            onClick={() => setActiveIdx(i)}
             className={cn(
-              "text-[0.8125rem] leading-snug tracking-tight transition-colors",
-              line.active
-                ? "font-semibold text-white"
-                : "text-white/28",
+              "block w-full text-left text-[0.8125rem] leading-snug tracking-tight transition-all duration-300",
+              i === activeIdx
+                ? "font-semibold text-white scale-[1.03] origin-left text-lavender"
+                : "text-white/28 hover:text-white/50",
             )}
           >
-            {line.t}
-          </p>
+            {text}
+          </button>
         ))}
       </div>
 
       <div className="px-5 pb-5">
         <div className="h-[3px] w-full overflow-hidden rounded-full bg-white/12">
-          <div className="h-full w-[52%] rounded-full bg-gradient-to-r from-violet-deep to-lavender" />
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-violet-deep to-lavender transition-all duration-300"
+            style={{ width: `${((activeIdx + 1) / lines.length) * 100}%` }}
+          />
         </div>
         <div className="mt-4">
           <Transport compact />
@@ -183,34 +231,49 @@ export function LyricsScreen() {
 }
 
 export function EqualizerScreen() {
-  const bands = [72, 58, 84, 46, 66, 92, 54, 38];
+  const PRESETS: Record<string, number[]> = {
+    "Flat": [50, 50, 50, 50, 50, 50, 50, 50],
+    "Bass": [85, 74, 88, 48, 55, 62, 54, 42],
+    "Vocal": [35, 45, 65, 88, 92, 85, 58, 45],
+    "Live": [70, 60, 50, 65, 75, 88, 80, 70],
+  };
+
+  const [activePreset, setActivePreset] = useState("Bass");
+  const [bands, setBands] = useState<number[]>(PRESETS["Bass"]);
   const labels = ["32", "64", "125", "250", "1k", "2k", "4k", "8k"];
 
+  const selectPreset = (p: string) => {
+    setActivePreset(p);
+    setBands(PRESETS[p]);
+  };
+
   return (
-    <div className="flex h-full flex-col bg-gradient-to-b from-[#101018] to-[#08080c]">
+    <div className="flex h-full flex-col bg-gradient-to-b from-[#101018] to-[#08080c] select-none">
       <StatusBar />
       <div className="px-4 pt-2">
         <p className="text-[0.5625rem] uppercase tracking-[0.2em] text-white/40">
           Equalizer
         </p>
         <p className="mt-1 text-[0.9375rem] font-semibold tracking-tight text-white">
-          Bass Boost
+          {activePreset} Mode
         </p>
       </div>
 
       <div className="mt-3 flex gap-1.5 px-4">
-        {["Flat", "Bass", "Vocal", "Live"].map((p, i) => (
-          <span
+        {Object.keys(PRESETS).map((p) => (
+          <button
             key={p}
+            type="button"
+            onClick={() => selectPreset(p)}
             className={cn(
-              "rounded-full px-2.5 py-1 text-[0.5rem] font-medium",
-              i === 1
-                ? "bg-violet-core text-white"
-                : "bg-white/6 text-white/45",
+              "rounded-full px-2.5 py-1 text-[0.5rem] font-medium transition-colors",
+              p === activePreset
+                ? "bg-violet-core text-white shadow-sm"
+                : "bg-white/6 text-white/45 hover:text-white",
             )}
           >
             {p}
-          </span>
+          </button>
         ))}
       </div>
 
@@ -219,11 +282,11 @@ export function EqualizerScreen() {
           <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-1.5">
             <div className="relative flex w-full flex-1 items-end justify-center rounded-full bg-white/5">
               <div
-                className="w-[3px] rounded-full bg-gradient-to-t from-violet-deep to-lavender"
+                className="w-[3px] rounded-full bg-gradient-to-t from-violet-deep to-lavender transition-all duration-300"
                 style={{ height: `${h}%` }}
               />
               <span
-                className="absolute h-2 w-2 rounded-full bg-white shadow-[0_0_8px_rgba(196,181,253,0.9)]"
+                className="absolute h-2 w-2 rounded-full bg-white shadow-[0_0_8px_rgba(196,181,253,0.9)] transition-all duration-300"
                 style={{ bottom: `calc(${h}% - 4px)` }}
               />
             </div>
@@ -248,6 +311,7 @@ export function EqualizerScreen() {
 }
 
 export function LibraryScreen() {
+  const [selected, setSelected] = useState(0);
   const rows = [
     { title: "Late Night Drive", meta: "24 tracks", tone: "dusk" as const },
     { title: "Focus / Deep Work", meta: "18 tracks", tone: "tide" as const },
@@ -256,7 +320,7 @@ export function LibraryScreen() {
   ];
 
   return (
-    <div className="flex h-full flex-col bg-gradient-to-b from-[#111018] to-[#08080c]">
+    <div className="flex h-full flex-col bg-gradient-to-b from-[#111018] to-[#08080c] select-none">
       <StatusBar />
       <div className="px-4 pt-2">
         <p className="text-[0.5625rem] uppercase tracking-[0.2em] text-white/40">
@@ -272,12 +336,20 @@ export function LibraryScreen() {
           <circle cx="11" cy="11" r="7" />
           <path d="m20 20-3.5-3.5" />
         </svg>
-        <span className="text-[0.5625rem] text-white/30">Search your library</span>
+        <span className="text-[0.5625rem] text-white/30">Search library...</span>
       </div>
 
       <div className="mt-4 flex-1 space-y-2.5 px-4">
         {rows.map((row, i) => (
-          <div key={row.title} className="flex items-center gap-3">
+          <button
+            key={row.title}
+            type="button"
+            onClick={() => setSelected(i)}
+            className={cn(
+              "flex w-full items-center gap-3 rounded-lg p-1.5 text-left transition-colors",
+              selected === i ? "bg-white/[0.08]" : "hover:bg-white/[0.03]",
+            )}
+          >
             <AlbumArtwork
               tone={row.tone}
               title=""
@@ -291,8 +363,10 @@ export function LibraryScreen() {
               </p>
               <p className="truncate text-[0.5rem] text-white/35">{row.meta}</p>
             </div>
-            <span className="text-white/20">···</span>
-          </div>
+            {selected === i && (
+              <span className="h-1.5 w-1.5 rounded-full bg-violet-core" />
+            )}
+          </button>
         ))}
       </div>
 
@@ -309,21 +383,30 @@ export function LibraryScreen() {
 }
 
 export function RoomScreen() {
-  const queue = [
+  const [queue, setQueue] = useState([
     { title: "Midnight Bloom", by: "Aria Vale", active: true },
     { title: "Slow Tide", by: "Kite & Co.", active: false },
     { title: "Paper Lanterns", by: "Nova Reyes", active: false },
-  ];
+  ]);
+
+  const addSong = () => {
+    const extraSongs = [
+      { title: "Ocean Motion", by: "Solar Drift", active: false },
+      { title: "Echoes of Rain", by: "Aura", active: false },
+    ];
+    const nextSong = extraSongs[queue.length % extraSongs.length];
+    setQueue((prev) => [...prev, nextSong]);
+  };
 
   return (
-    <div className="flex h-full flex-col bg-gradient-to-b from-[#160f24] to-[#08080c]">
+    <div className="flex h-full flex-col bg-gradient-to-b from-[#160f24] to-[#08080c] select-none">
       <StatusBar />
       <div className="flex items-center justify-between px-4 pt-2">
         <span className="text-[0.5625rem] uppercase tracking-[0.2em] text-white/40">
           Listening room
         </span>
         <span className="flex items-center gap-1 rounded-full bg-emerald-400/12 px-2 py-0.5 text-[0.5rem] font-medium text-emerald-300">
-          <span className="h-1 w-1 rounded-full bg-emerald-400" />
+          <span className="h-1 w-1 rounded-full bg-emerald-400 animate-pulse" />
           Synced
         </span>
       </div>
@@ -333,7 +416,7 @@ export function RoomScreen() {
           <span
             key={initials}
             className={cn(
-              "grid h-8 w-8 place-items-center rounded-full text-[0.5rem] font-semibold ring-2 ring-[#0b0912]",
+              "grid h-8 w-8 place-items-center rounded-full text-[0.5rem] font-semibold ring-2 ring-[#0b0912] shadow-sm",
               i === 3
                 ? "bg-white/10 text-white/60"
                 : "bg-gradient-to-br from-violet-core to-violet-deep text-white",
@@ -360,13 +443,13 @@ export function RoomScreen() {
         <p className="text-[0.5rem] text-white/40">Everyone in sync · 4 listeners</p>
       </div>
 
-      <div className="mt-3 flex-1 space-y-2 px-4">
+      <div className="mt-3 flex-1 space-y-2 px-4 overflow-y-auto no-scrollbar max-h-[110px]">
         {queue.map((q) => (
           <div
             key={q.title}
             className={cn(
-              "flex items-center justify-between rounded-md px-2 py-1.5",
-              q.active ? "bg-violet-core/12" : "bg-white/[0.03]",
+              "flex items-center justify-between rounded-md px-2 py-1.5 transition-colors",
+              q.active ? "bg-violet-core/15" : "bg-white/[0.03]",
             )}
           >
             <div className="min-w-0">
@@ -385,12 +468,17 @@ export function RoomScreen() {
         ))}
       </div>
 
-      <div className="px-4 pb-4">
-        <div className="flex items-center justify-center gap-5">
+      <div className="px-4 pb-4 mt-auto">
+        <div className="flex items-center justify-between">
           <span className="text-[0.5rem] text-white/35">Shared queue</span>
-          <span className="rounded-full bg-white px-3 py-1 text-[0.5rem] font-semibold text-black">
-            Add song
-          </span>
+          <button
+            type="button"
+            onClick={addSong}
+            className="flex items-center gap-1 rounded-full bg-white px-3 py-1 text-[0.5rem] font-semibold text-black transition-transform active:scale-95"
+          >
+            <Plus size={10} />
+            <span>Add song</span>
+          </button>
         </div>
       </div>
     </div>

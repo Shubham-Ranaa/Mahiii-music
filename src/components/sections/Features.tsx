@@ -131,9 +131,11 @@ export function Features() {
             role="tabpanel"
             id={`panel-${active.id}`}
             aria-labelledby={`tab-${active.id}`}
-            className="sticky top-28"
+            className="sticky top-[calc(var(--nav-h)+1rem)]"
           >
-            <FeatureVisual feature={active} />
+            <div className="min-h-[30rem]">
+              <FeatureVisual feature={active} />
+            </div>
           </div>
         </div>
 
@@ -142,12 +144,12 @@ export function Features() {
           <div
             ref={trackRef}
             onScroll={onTrackScroll}
-            className="no-scrollbar snap-x-mandatory snap-center-child -mx-[clamp(1.25rem,4vw,3.5rem)] flex overflow-x-auto px-[clamp(1.25rem,4vw,3.5rem)] pb-4"
+            className="no-scrollbar snap-x-mandatory snap-center-child -mx-[clamp(1.25rem,4vw,3.5rem)] flex overflow-x-auto px-[clamp(1.25rem,4vw,3.5rem)] pb-5"
           >
             {FEATURES.map((feature) => (
               <div
                 key={feature.id}
-                className="w-full shrink-0 pr-3 last:pr-0"
+                className="w-[80%] sm:w-[75%] shrink-0 pr-3 last-pr-0"
                 style={{ scrollSnapAlign: "center" }}
               >
                 <FeatureVisual feature={feature} compact />
@@ -155,26 +157,57 @@ export function Features() {
             ))}
           </div>
 
-          <div className="mt-6 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-1.5">
+          <div className="mt-5 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-1.5" role="tablist" aria-label="Features">
               {FEATURES.map((f) => (
                 <button
                   key={f.id}
                   type="button"
+                  role="tab"
+                  aria-selected={f.id === activeId}
                   aria-label={`Show ${f.title}`}
                   onClick={() => selectFeature(f.id)}
                   className={cn(
                     "h-1.5 rounded-full transition-all duration-400",
                     f.id === activeId
-                      ? "w-6 bg-violet-core"
-                      : "w-1.5 bg-white/20",
+                      ? "w-7 bg-violet-core shadow-[0_0_12px_rgba(168,85,247,0.8)]"
+                      : "w-2 bg-white/20 hover:bg-white/40",
                   )}
                 />
               ))}
             </div>
-            <span className="font-mono text-[0.625rem] tracking-[0.16em] text-ink-muted">
-              {active.index} / 07
-            </span>
+
+            <div className="flex items-center gap-3">
+              <span className="font-mono text-[0.625rem] tracking-[0.16em] text-ink-muted">
+                {active.index} / 07
+              </span>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const idx = FEATURES.findIndex((f) => f.id === activeId);
+                    const prev = FEATURES[(idx - 1 + FEATURES.length) % FEATURES.length];
+                    selectFeature(prev.id);
+                  }}
+                  aria-label="Previous feature"
+                  className="grid h-7 w-7 place-items-center rounded-full border border-white/10 text-ink-muted hover:border-white/25 hover:text-ink transition-colors active:scale-95"
+                >
+                  ←
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const idx = FEATURES.findIndex((f) => f.id === activeId);
+                    const next = FEATURES[(idx + 1) % FEATURES.length];
+                    selectFeature(next.id);
+                  }}
+                  aria-label="Next feature"
+                  className="grid h-7 w-7 place-items-center rounded-full border border-white/10 text-ink-muted hover:border-white/25 hover:text-ink transition-colors active:scale-95"
+                >
+                  →
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
