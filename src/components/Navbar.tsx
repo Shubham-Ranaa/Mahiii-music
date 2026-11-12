@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Menu, X, ArrowUpRight, QrCode } from "lucide-react";
-import { NAV_LINKS, DOWNLOAD_URL, IS_EXTERNAL_DOWNLOAD, CREATORS } from "@/lib/constants";
+import { NAV_LINKS, DOWNLOAD_URL, DOWNLOAD_ATTR, IS_EXTERNAL_DOWNLOAD, CREATORS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { ButtonLink } from "@/components/ui/Button";
 import { DownloadQRModal } from "@/components/ui/DownloadQRModal";
@@ -152,6 +152,7 @@ export function Navbar() {
             {/* Download Button */}
             <ButtonLink
               href={DOWNLOAD_URL}
+              download={DOWNLOAD_ATTR}
               external={IS_EXTERNAL_DOWNLOAD}
               className="hidden sm:inline-flex rounded-full bg-gradient-to-r from-violet-core to-violet-deep px-5 py-2 text-sm font-medium text-white shadow-[0_0_25px_rgba(168,85,247,0.4)] transition-all duration-300 hover:shadow-[0_0_35px_rgba(168,85,247,0.6)] hover:scale-[1.02] active:scale-[0.98]"
               size="md"
@@ -256,6 +257,7 @@ export function Navbar() {
               <div className="mt-6 pt-4 border-t border-white/[0.05]">
                 <ButtonLink
                   href={DOWNLOAD_URL}
+                  download={DOWNLOAD_ATTR}
                   external={IS_EXTERNAL_DOWNLOAD}
                   size="lg"
                   onClick={close}

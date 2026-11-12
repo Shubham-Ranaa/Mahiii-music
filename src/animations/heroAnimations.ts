@@ -17,8 +17,13 @@ export function useHeroAnimation() {
     () => {
       const q = gsap.utils.selector(scope);
 
+      // Every animated piece of the first section.
+      const targets = q(
+        "[data-hero-glow], [data-hero-wordmark], [data-hero-line], [data-hero-fade], [data-hero-hint], [data-hero-phone], [data-hero-art], [data-hero-scroll]",
+      );
+
       if (reduced) {
-        gsap.set(q("[data-hero-glow], [data-hero-wordmark], [data-hero-line] > span, [data-hero-fade], [data-hero-phone], [data-hero-art], [data-hero-scroll]"), {
+        gsap.set(targets, {
           opacity: 1,
           y: 0,
           yPercent: 0,
@@ -32,55 +37,72 @@ export function useHeroAnimation() {
       const tl = gsap.timeline({
         paused: true,
         defaults: { ease: "expo.out" },
+        // Hand the elements back to the stylesheet once the entrance is over so
+        // hover states and CSS transitions behave normally afterwards.
+        onComplete: () => {
+          gsap.set(targets, { clearProps: "transform,opacity" });
+        },
       });
 
-      tl.from(q("[data-hero-glow]"), {
-        opacity: 0,
-        scale: 0.85,
-        duration: 1.8,
-      })
-        .from(
+      tl.fromTo(
+        q("[data-hero-glow]"),
+        { opacity: 0, scale: 0.85 },
+        { opacity: 1, scale: 1, duration: 1.8 },
+      )
+        .fromTo(
           q("[data-hero-wordmark]"),
-          { yPercent: 110, opacity: 0, duration: 1.25 },
+          { yPercent: 110, opacity: 0 },
+          { yPercent: 0, opacity: 1, duration: 1.25 },
           0.1,
         )
-        .from(
-          q("[data-hero-line] > span"),
-          { yPercent: 108, duration: 1.15, stagger: 0.09 },
+        .fromTo(
+          q("[data-hero-line]"),
+          { yPercent: 108 },
+          { yPercent: 0, duration: 1.15, stagger: 0.09 },
           0.25,
         )
-        .from(
+        .fromTo(
           q("[data-hero-fade]"),
-          { opacity: 0, y: 22, duration: 1, stagger: 0.1 },
+          { opacity: 0, y: 22 },
+          { opacity: 1, y: 0, duration: 1, stagger: 0.1 },
           0.6,
         )
-        .from(
+        .fromTo(
           q("[data-hero-phone]"),
+          { opacity: 0, y: 80, scale: 0.9, rotate: -4 },
           {
-            opacity: 0,
-            y: 80,
-            scale: 0.9,
-            rotate: -4,
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            rotate: 0,
             duration: 1.6,
             ease: "back.out(1.25)",
           },
           0.35,
         )
-        .from(
+        .fromTo(
+          q("[data-hero-hint]"),
+          { opacity: 0, y: -14, scale: 0.92 },
+          { opacity: 1, y: 0, scale: 1, duration: 0.9 },
+          0.55,
+        )
+        .fromTo(
           q("[data-hero-art]"),
+          { opacity: 0, scale: 0.5, y: 40 },
           {
-            opacity: 0,
-            scale: 0.5,
-            y: 40,
+            opacity: 1,
+            scale: 1,
+            y: 0,
             duration: 1.25,
             stagger: { each: 0.12, from: "random" },
             ease: "back.out(1.6)",
           },
           0.65,
         )
-        .from(
+        .fromTo(
           q("[data-hero-scroll]"),
-          { opacity: 0, y: 12, duration: 0.8 },
+          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.8 },
           1.2,
         );
 
@@ -94,8 +116,10 @@ export function useHeroAnimation() {
         window.addEventListener("mahii:loader-exit", triggerHero, { once: true });
       }
 
-      // Safety fallback: if no loader is present or loader finished before mount
-      const fallbackTimer = setTimeout(triggerHero, 3100);
+      // Safety fallback: the loader dispatches `mahii:loader-exit` when its
+      // curtains lift. If it never shows (or fails to fire), run the entrance
+      // anyway so the hero can never be left invisible.
+      const fallbackTimer = setTimeout(triggerHero, 4500);
 
       return () => {
         if (typeof window !== "undefined") {

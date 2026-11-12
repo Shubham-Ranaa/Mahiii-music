@@ -1,7 +1,8 @@
 /**
  * Central content + configuration for the MAHII site.
- * Download URL is intentionally configurable: the real APK/distribution link
- * is not published yet, so it falls back to the on-page download section.
+ * Download URL is intentionally configurable: it points at the bundled APK in
+ * `public/` by default and can be overridden with an env var (Play Store,
+ * a CDN, a release asset, ...).
  */
 
 export const SITE = {
@@ -13,15 +14,27 @@ export const SITE = {
 } as const;
 
 /**
- * Set NEXT_PUBLIC_MAHII_DOWNLOAD_URL to a real APK / Play Store / distribution
- * link when it exists. Until then every download CTA points at #download.
+ * The APK shipped inside `public/`. Every download CTA points straight at it
+ * so pressing a button downloads the app instead of jumping to a section.
+ */
+export const DOWNLOAD_FILE_NAME = "mahii-latest.apk";
+
+/**
+ * Set NEXT_PUBLIC_MAHII_DOWNLOAD_URL to a Play Store / CDN / release link to
+ * override the bundled APK. Defaults to the local APK in `public/`.
  */
 export const DOWNLOAD_URL: string =
-  process.env.NEXT_PUBLIC_MAHII_DOWNLOAD_URL?.trim() || "#download";
+  process.env.NEXT_PUBLIC_MAHII_DOWNLOAD_URL?.trim() || `/${DOWNLOAD_FILE_NAME}`;
 
 export const DOWNLOAD_SECTION_ID = "#download";
 
 export const IS_EXTERNAL_DOWNLOAD = DOWNLOAD_URL.startsWith("http");
+
+/**
+ * `download` attribute value for the download CTAs. Ignored by browsers for
+ * cross-origin links, so it stays safe when DOWNLOAD_URL points elsewhere.
+ */
+export const DOWNLOAD_ATTR = DOWNLOAD_FILE_NAME;
 
 export const NAV_LINKS = [
   { label: "Experience", href: "#experience" },

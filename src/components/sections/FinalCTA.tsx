@@ -7,7 +7,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { ButtonLink } from "@/components/ui/Button";
 import { AudioWaveform } from "@/components/ui/AudioWaveform";
 import { DownloadQRModal } from "@/components/ui/DownloadQRModal";
-import { DOWNLOAD_URL, IS_EXTERNAL_DOWNLOAD } from "@/lib/constants";
+import { DOWNLOAD_URL, DOWNLOAD_ATTR, IS_EXTERNAL_DOWNLOAD } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export function FinalCTA() {
@@ -128,6 +128,7 @@ export function FinalCTA() {
         <div data-cta-button className="mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
           <ButtonLink
             href={DOWNLOAD_URL}
+            download={DOWNLOAD_ATTR}
             external={IS_EXTERNAL_DOWNLOAD}
             size="lg"
             className="relative overflow-hidden rounded-full bg-gradient-to-r from-violet-core to-violet-deep px-10 py-4 text-base font-medium text-white shadow-[0_0_35px_rgba(168,85,247,0.4)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(168,85,247,0.6)] hover:scale-[1.04] active:scale-[0.98] group"

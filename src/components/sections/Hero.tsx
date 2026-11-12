@@ -9,7 +9,7 @@ import { AudioWaveform } from "@/components/ui/AudioWaveform";
 import { InteractiveNowPlaying, DEMO_TRACKS, type Track } from "@/components/ui/InteractiveNowPlaying";
 import { DownloadQRModal } from "@/components/ui/DownloadQRModal";
 import { useHeroAnimation, useMouseParallax } from "@/animations/heroAnimations";
-import { DOWNLOAD_URL, DOWNLOAD_SECTION_ID, IS_EXTERNAL_DOWNLOAD } from "@/lib/constants";
+import { DOWNLOAD_URL, DOWNLOAD_ATTR } from "@/lib/constants";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 
@@ -205,7 +205,8 @@ export function Hero() {
             className="flex flex-wrap items-center gap-3 sm:gap-4"
           >
             <ButtonLink
-              href={DOWNLOAD_SECTION_ID}
+              href={DOWNLOAD_URL}
+              download={DOWNLOAD_ATTR}
               size="lg"
               className="relative overflow-hidden rounded-full bg-gradient-to-r from-violet-core to-violet-deep px-8 py-3.5 text-base font-medium text-white shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-all duration-300 hover:shadow-[0_0_45px_rgba(168,85,247,0.6)] hover:scale-[1.03] active:scale-[0.98] group"
             >
@@ -245,9 +246,14 @@ export function Hero() {
         {/* ---------------- Device composition ---------------- */}
         <div className="relative z-0 flex flex-col items-center justify-center lg:justify-end">
           {/* Interactive Mockup Hint Pill */}
-          <div className="mb-3 flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[0.625rem] text-ink-muted backdrop-blur-md animate-pulse-subtle">
-            <Sparkles size={10} className="text-violet-core" />
-            <span>Interactive Demo · Tap player to test</span>
+          {/* The GSAP entrance lives on the wrapper: the pill itself carries the
+              `animate-pulse-subtle` keyframes, and a CSS animation would
+              override anything GSAP writes to the same element. */}
+          <div data-hero-hint className="mb-3 flex justify-center">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[0.625rem] text-ink-muted backdrop-blur-md animate-pulse-subtle">
+              <Sparkles size={10} className="text-violet-core" />
+              <span>Interactive Demo · Tap player to test</span>
+            </div>
           </div>
 
           <div

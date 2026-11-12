@@ -1,9 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, QrCode, Download, Copy, Check, Smartphone, ShieldCheck } from "lucide-react";
-import { DOWNLOAD_URL, SITE } from "@/lib/constants";
-import { cn } from "@/lib/utils";
+import { createPortal } from "react-dom";
+import { X, Download, Copy, Check, Smartphone, ShieldCheck } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
+import { DOWNLOAD_URL, DOWNLOAD_ATTR, SITE } from "@/lib/constants";
+
+/** MAHII dot mark, embedded in the middle of the QR code. */
+const BRAND_MARK = `data:image/svg+xml;utf8,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#101016"/><circle cx="16" cy="16" r="6" fill="#A855F7"/></svg>',
+)}`;
 
 export function DownloadQRModal({
   isOpen,
@@ -28,12 +34,14 @@ export function DownloadQRModal({
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
+  if (!isOpen || typeof document === "undefined") return null;
 
+  // Absolute URL of the APK so the QR code and the copied link both work
+  // when scanned from another device.
   const fullUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}${DOWNLOAD_URL.startsWith("#") ? DOWNLOAD_URL : ""}`
-      : "https://mahii.app";
+      ? new URL(DOWNLOAD_URL, window.location.origin).toString()
+      : new URL(DOWNLOAD_URL, SITE.url).toString();
 
   const handleCopy = () => {
     navigator.clipboard?.writeText(fullUrl);
@@ -41,7 +49,10 @@ export function DownloadQRModal({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  return (
+  // Portalled to <body> so the overlay is pinned to the viewport: the page
+  // <main> is transformed by GSAP, which would otherwise turn `fixed` into
+  // an element positioned against the whole (very tall) page.
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -77,61 +88,23 @@ export function DownloadQRModal({
           </div>
         </div>
 
-        {/* QR Code Canvas Mockup */}
+        {/* QR Code — encodes the real APK link */}
         <div className="my-6 flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-center">
           <div className="relative rounded-xl bg-white p-3 shadow-lg">
-            {/* SVG QR Code Pattern */}
-            <svg
-              width="160"
-              height="160"
-              viewBox="0 0 160 160"
-              className="text-void"
-              fill="currentColor"
-            >
-              {/* Corner position locators */}
-              {/* Top-Left */}
-              <rect x="10" y="10" width="40" height="40" rx="6" />
-              <rect x="16" y="16" width="28" height="28" rx="3" fill="white" />
-              <rect x="22" y="22" width="16" height="16" rx="2" />
-
-              {/* Top-Right */}
-              <rect x="110" y="10" width="40" height="40" rx="6" />
-              <rect x="116" y="16" width="28" height="28" rx="3" fill="white" />
-              <rect x="122" y="22" width="16" height="16" rx="2" />
-
-              {/* Bottom-Left */}
-              <rect x="10" y="110" width="40" height="40" rx="6" />
-              <rect x="16" y="116" width="28" height="28" rx="3" fill="white" />
-              <rect x="22" y="122" width="16" height="16" rx="2" />
-
-              {/* Random-looking decorative data blocks */}
-              <rect x="60" y="14" width="8" height="8" rx="1.5" />
-              <rect x="74" y="14" width="14" height="8" rx="1.5" />
-              <rect x="94" y="26" width="8" height="14" rx="1.5" />
-              <rect x="60" y="32" width="22" height="8" rx="1.5" />
-              <rect x="14" y="60" width="8" height="18" rx="1.5" />
-              <rect x="28" y="70" width="18" height="8" rx="1.5" />
-              <rect x="36" y="86" width="12" height="12" rx="1.5" />
-              <rect x="60" y="60" width="12" height="12" rx="2" />
-              <rect x="78" y="64" width="18" height="8" rx="1.5" />
-              <rect x="102" y="60" width="14" height="14" rx="2" />
-              <rect x="124" y="68" width="18" height="12" rx="1.5" />
-              <rect x="60" y="80" width="18" height="8" rx="1.5" />
-              <rect x="84" y="78" width="12" height="18" rx="1.5" />
-              <rect x="102" y="82" width="8" height="16" rx="1.5" />
-              <rect x="116" y="88" width="18" height="10" rx="1.5" />
-              <rect x="60" y="110" width="12" height="20" rx="1.5" />
-              <rect x="78" y="116" width="18" height="10" rx="1.5" />
-              <rect x="102" y="110" width="14" height="8" rx="1.5" />
-              <rect x="122" y="116" width="18" height="18" rx="2" />
-              <rect x="80" y="132" width="12" height="12" rx="1.5" />
-              <rect x="100" y="124" width="14" height="14" rx="2" />
-              <rect x="140" y="130" width="10" height="14" rx="1.5" />
-
-              {/* Center MAHII branding badge inside QR code */}
-              <rect x="66" y="66" width="28" height="28" rx="8" fill="#101016" />
-              <circle cx="80" cy="80" r="5" fill="#A855F7" />
-            </svg>
+            <QRCodeSVG
+              value={fullUrl}
+              size={160}
+              level="H"
+              marginSize={1}
+              bgColor="#FFFFFF"
+              fgColor="#0A0A12"
+              imageSettings={{
+                src: BRAND_MARK,
+                height: 28,
+                width: 28,
+                excavate: true,
+              }}
+            />
           </div>
           <p className="mt-4 text-xs font-medium text-ink">
             Scan with your phone&apos;s camera
@@ -145,7 +118,7 @@ export function DownloadQRModal({
         <div className="flex flex-col gap-2.5 sm:flex-row">
           <a
             href={DOWNLOAD_URL}
-            download
+            download={DOWNLOAD_ATTR}
             className="flex flex-1 items-center justify-center gap-2 rounded-full bg-ink py-3 text-sm font-semibold text-void transition-all hover:bg-white hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] active:scale-[0.98]"
           >
             <Download size={15} />
@@ -175,7 +148,8 @@ export function DownloadQRModal({
           <span>No trackers · No telemetry · Verified safe</span>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

@@ -1,0 +1,2 @@
+# The bundled APK is a binary artifact — never let Git touch its bytes.
+*.apk binary

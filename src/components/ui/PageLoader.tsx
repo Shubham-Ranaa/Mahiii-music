@@ -12,6 +12,7 @@ export function PageLoader() {
   const progressFillRef = useRef<HTMLDivElement>(null);
   const statusRef = useRef<HTMLSpanElement>(null);
   const progressObj = useRef({ val: 0 });
+  const timelineRef = useRef<gsap.core.Timeline | null>(null);
 
   useGSAP(
     () => {
@@ -49,6 +50,8 @@ export function PageLoader() {
         onComplete: () => {
           document.body.style.overflow = originalOverflow;
           setComplete(true);
+          // Let the hero know it can run its entrance animation now.
+          window.dispatchEvent(new Event("mahii:loader-exit"));
         },
       });
 
@@ -224,8 +227,7 @@ export function PageLoader() {
       // ========================================
       // 4. GRAND OUT ANIMATION (2.9s - 3.8s)
       // ========================================
-      masterTl
-        // Center content lifts and fades with scale
+      masterTl        // Center content lifts and fades with scale
         .to(q("[data-center-content]"), {
           scale: 0.85,
           y: -30,
@@ -270,6 +272,8 @@ export function PageLoader() {
           duration: 0.2,
           ease: "power2.in",
         }, 3.5);
+
+      timelineRef.current = masterTl;
 
     },
     { scope: containerRef },
@@ -349,6 +353,7 @@ export function PageLoader() {
 
           <button
             type="button"
+            onClick={() => timelineRef.current?.progress(1)}
             className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-[0.6875rem] text-ink-muted hover:border-violet-core/50 hover:bg-white/[0.08] hover:text-ink transition-all duration-300"
           >
             Skip ↗

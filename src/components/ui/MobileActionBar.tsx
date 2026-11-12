@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Smartphone, ArrowUp } from "lucide-react";
-import { DOWNLOAD_URL } from "@/lib/constants";
+import { DOWNLOAD_URL, DOWNLOAD_ATTR } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export function MobileActionBar() {
@@ -37,7 +37,7 @@ export function MobileActionBar() {
         {/* Download Action Button */}
         <a
           href={DOWNLOAD_URL}
-          download
+          download={DOWNLOAD_ATTR}
           className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-core via-violet-deep to-lavender px-4 h-10 text-xs font-semibold text-white shadow-[0_0_15px_rgba(168,85,247,0.4)] active:scale-95 transition-transform"
         >
           <Smartphone size={14} />
