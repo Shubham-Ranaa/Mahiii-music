@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Menu, X, ArrowUpRight, QrCode } from "lucide-react";
-import { NAV_LINKS, DOWNLOAD_URL, IS_EXTERNAL_DOWNLOAD, SOCIALS } from "@/lib/constants";
+import { NAV_LINKS, DOWNLOAD_URL, IS_EXTERNAL_DOWNLOAD, CREATORS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { ButtonLink } from "@/components/ui/Button";
 import { DownloadQRModal } from "@/components/ui/DownloadQRModal";
 import { MobileActionBar } from "@/components/ui/MobileActionBar";
-import { InstagramIcon, GithubIcon } from "@/components/ui/BrandIcons";
+import { SOCIAL_ICONS } from "@/components/ui/BrandIcons";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -273,27 +273,34 @@ export function Navbar() {
 
           {/* Mobile Footer */}
           <div className="border-t border-white/[0.05] px-5 py-5">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
               <span className="text-xs text-ink-muted">Follow development</span>
               <div className="flex items-center gap-3">
-                <a
-                  href={SOCIALS.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Harsh's Instagram profile"
-                  className="grid h-8 w-8 place-items-center rounded-full border border-white/[0.08] text-ink-soft transition-all duration-300 hover:text-white hover:border-violet-core/50 hover:shadow-[0_0_15px_rgba(168,85,247,0.3)]"
-                >
-                  <InstagramIcon size={14} />
-                </a>
-                <a
-                  href={SOCIALS.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Harsh's GitHub profile"
-                  className="grid h-8 w-8 place-items-center rounded-full border border-white/[0.08] text-ink-soft transition-all duration-300 hover:text-white hover:border-violet-core/50 hover:shadow-[0_0_15px_rgba(168,85,247,0.3)]"
-                >
-                  <GithubIcon size={14} />
-                </a>
+                {CREATORS.map((creator, index) => (
+                  <span key={creator.name} className="flex items-center gap-3">
+                    {index > 0 && (
+                      <span
+                        aria-hidden
+                        className="h-4 w-px bg-white/10"
+                      />
+                    )}
+                    {creator.links.map((link) => {
+                      const Icon = SOCIAL_ICONS[link.label];
+                      return (
+                        <a
+                          key={link.label}
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`${creator.name}'s ${link.label} profile`}
+                          className="grid h-8 w-8 place-items-center rounded-full border border-white/[0.08] text-ink-soft transition-all duration-300 hover:text-white hover:border-violet-core/50 hover:shadow-[0_0_15px_rgba(168,85,247,0.3)]"
+                        >
+                          <Icon size={14} />
+                        </a>
+                      );
+                    })}
+                  </span>
+                ))}
               </div>
             </div>
           </div>

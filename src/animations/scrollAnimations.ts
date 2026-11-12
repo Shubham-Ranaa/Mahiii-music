@@ -30,18 +30,22 @@ export function useScrollReveal<T extends HTMLElement = HTMLElement>() {
 
       const fadeTargets = q("[data-reveal]");
       if (fadeTargets.length) {
-        gsap.from(fadeTargets, {
-          opacity: 0,
-          y: 36,
-          duration: 1.05,
-          ease: "power3.out",
-          stagger: 0.08,
-          scrollTrigger: {
-            trigger: scope.current,
-            start: "top 82%",
-            toggleActions: "play none none reverse",
+        gsap.fromTo(
+          fadeTargets,
+          { opacity: 0, y: 36 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.05,
+            ease: "power3.out",
+            stagger: 0.08,
+            scrollTrigger: {
+              trigger: scope.current,
+              start: "top 82%",
+              toggleActions: "play none none reverse",
+            },
           },
-        });
+        );
       }
 
       const lineTargets = q("[data-reveal-line] > span");

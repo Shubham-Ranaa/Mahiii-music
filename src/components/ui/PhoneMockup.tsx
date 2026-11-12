@@ -23,7 +23,10 @@ export function PhoneMockup({
   return (
     <div
       className={cn("relative", className)}
-      style={{ width: "100%", maxWidth: `${width}px` }}
+      // A definite width is required: with `width: 100%` inside a shrink-to-fit
+      // parent the mockup collapsed to the width of its own label text and the
+      // screen content overflowed the frame.
+      style={{ width: `${width}px`, maxWidth: "100%" }}
     >
       {glow && (
         <div

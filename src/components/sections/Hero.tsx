@@ -28,7 +28,7 @@ const FLOATING_ART: Array<{
     tone: "ember",
     title: "Golden Hour",
     variant: 1,
-    className: "left-[3%] top-[15%]",
+    className: "left-[-3%] top-[14%]",
     depth: 1.6,
     delay: "0s",
     size: "w-[72px] sm:w-[90px] lg:w-[110px]",
@@ -38,7 +38,7 @@ const FLOATING_ART: Array<{
     tone: "tide",
     title: "Low Tide",
     variant: 2,
-    className: "right-[2%] top-[8%]",
+    className: "right-[-2%] top-[7%]",
     depth: 1.1,
     delay: "1.2s",
     size: "w-[60px] sm:w-[78px] lg:w-[94px]",
@@ -48,7 +48,7 @@ const FLOATING_ART: Array<{
     tone: "rose",
     title: "Neon Letters",
     variant: 0,
-    className: "right-[7%] bottom-[14%]",
+    className: "right-[-3%] bottom-[13%]",
     depth: 2,
     delay: "0.6s",
     size: "w-[66px] sm-w-[84px] lg:w-[102px]",
@@ -58,7 +58,7 @@ const FLOATING_ART: Array<{
     tone: "moss",
     title: "Field Notes",
     variant: 1,
-    className: "left-[7%] bottom-[8%]",
+    className: "left-[-3%] bottom-[7%]",
     depth: 1.3,
     delay: "1.8s",
     size: "w-[54px] sm:w-[70px] lg:w-[86px]",
@@ -253,7 +253,7 @@ export function Hero() {
           <div
             data-hero-phone
             data-parallax="0.5"
-            className="relative"
+            className="relative w-full max-w-[440px]"
             style={{ perspective: 1400 }}
             onPointerEnter={() => setPointerInside(true)}
             onPointerLeave={() => setPointerInside(false)}
@@ -270,7 +270,7 @@ export function Hero() {
 
             <PhoneMockup
               width={280}
-              className="animate-float-soft"
+              className="animate-float-soft mx-auto"
               label="MAHII Player"
             >
               <InteractiveNowPlaying

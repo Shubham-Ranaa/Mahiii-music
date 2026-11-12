@@ -101,7 +101,7 @@ export function FAQ() {
                 <span className="text-xs font-semibold text-ink">Have a specific question?</span>
               </div>
               <p className="mt-2 text-xs text-ink-muted leading-relaxed">
-                Harsh actively answers questions and reviews community feedback directly on Instagram or email.
+                Harsh and Shubham actively answer questions and review community feedback directly on social or email.
               </p>
               <a
                 href={SOCIALS.contact}

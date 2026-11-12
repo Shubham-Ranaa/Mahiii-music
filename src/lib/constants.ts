@@ -38,6 +38,68 @@ export const SOCIALS = {
   contact: "mailto:jhaharsh604@gmail.com",
 } as const;
 
+export type CreatorLink = {
+  label: "Instagram" | "GitHub" | "LinkedIn";
+  handle: string;
+  href: string;
+};
+
+export type Creator = {
+  name: string;
+  role: string;
+  blurb: string;
+  email: string;
+  links: CreatorLink[];
+};
+
+/**
+ * The two people behind MAHII. Both are credited equally everywhere they
+ * appear (creator section, footer, page loader).
+ */
+export const CREATORS: Creator[] = [
+  {
+    name: "Harsh Jha",
+    role: "Founder & Android Audio Engineer",
+    blurb: "Passionate about Kotlin, Jetpack Compose and shared music rooms",
+    email: "jhaharsh604@gmail.com",
+    links: [
+      {
+        label: "Instagram",
+        handle: "@jhaharsh604",
+        href: "https://instagram.com/jhaharsh604",
+      },
+      {
+        label: "GitHub",
+        handle: "github.com/jhaharsh604",
+        href: "https://github.com/jhaharsh604",
+      },
+    ],
+  },
+  {
+    name: "Shubham Rana",
+    role: "Co-Creator & Full-Stack Engineer",
+    blurb: "Building the web experience that puts the music first",
+    email: "shubhammranaa@gmail.com",
+    links: [
+      {
+        label: "LinkedIn",
+        handle: "linkedin.com/in/shubham-rana",
+        href: "https://www.linkedin.com/in/shubham-rana-a00ba4317/",
+      },
+      {
+        label: "GitHub",
+        handle: "github.com/Shubham-Ranaa",
+        href: "https://github.com/Shubham-Ranaa",
+      },
+      {
+        label: "Instagram",
+        handle: "@shubhammm_rana",
+        href: "https://www.instagram.com/shubhammm_rana?obrf=azBhNTN6ZzVtd283",
+      },
+    ],
+  },
+];
+
 export type Feature = {
   id: string;
   index: string;

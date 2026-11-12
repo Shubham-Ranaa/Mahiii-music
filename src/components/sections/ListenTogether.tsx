@@ -57,50 +57,59 @@ export function ListenTogether() {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: scope.current,
-          start: "top 65%",
-          once: true,
+          start: "top 70%",
+          toggleActions: "play none none none",
         },
         defaults: { ease: "power3.out" },
+        // Hand the elements back to the stylesheet once the entrance is done so
+        // hover states and CSS transitions behave normally afterwards.
+        onComplete: () => {
+          gsap.set(
+            q("[data-lt-copy], [data-lt-core], [data-lt-listener], [data-lt-ui]"),
+            { clearProps: "opacity,transform,translate,rotate,scale" },
+          );
+        },
       });
 
-      tl.from(q("[data-lt-copy]"), {
-        opacity: 0,
-        y: 25,
-        duration: 0.8,
-        stagger: 0.08,
-      })
-        .from(
+      // `fromTo` with explicit end values: a plain `from` captures whatever the
+      // element happens to look like when the tween is created, so a re-mounted
+      // timeline can end up animating 0 -> 0 and leave the section invisible.
+      tl.fromTo(
+        q("[data-lt-copy]"),
+        { opacity: 0, y: 25 },
+        { opacity: 1, y: 0, duration: 0.8, stagger: 0.08 },
+      )
+        .fromTo(
           q("[data-lt-core]"),
-          { opacity: 0, scale: 0.65, duration: 1, ease: "expo.out" },
+          { opacity: 0, scale: 0.65 },
+          { opacity: 1, scale: 1, duration: 1, ease: "expo.out" },
           0.15,
         )
-        .from(
+        .fromTo(
           q("[data-lt-path]"),
-          {
-            strokeDashoffset: 350,
-            duration: 1.4,
-            ease: "power2.inOut",
-            stagger: 0.1,
-          },
+          // `non-scaling-stroke` puts the dash pattern in screen pixels, so the
+          // value has to cover the longest rendered path on wide screens.
+          { strokeDashoffset: 600 },
+          { strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut", stagger: 0.1 },
           0.5,
         )
-        .from(
+        .fromTo(
           q("[data-lt-listener]"),
-          {
-            opacity: 0,
-            scale: 0.4,
-            y: 15,
-            duration: 0.7,
-            stagger: 0.12,
-            ease: "back.out(1.7)",
-          },
+          { opacity: 0, scale: 0.4, y: 15 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.7, stagger: 0.12, ease: "back.out(1.7)" },
           0.65,
         )
-        .from(
+        .fromTo(
           q("[data-lt-ui]"),
-          { opacity: 0, y: 22, duration: 0.8 },
+          { opacity: 0, y: 22 },
+          { opacity: 1, y: 0, duration: 0.8 },
           1.1,
         );
+
+      // Safety net: if the section is already on screen when it mounts the
+      // trigger may never fire, which would leave everything stuck at opacity 0.
+      const rect = scope.current.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.85) tl.play();
 
       return () => tl.kill();
     },
@@ -183,10 +192,12 @@ export function ListenTogether() {
                 </filter>
               </defs>
               {[
-                "M 400 200 C 260 120, 180 90, 60 60",
-                "M 400 200 C 540 110, 640 80, 740 40",
-                "M 400 200 C 250 260, 150 300, 40 300",
-                "M 400 200 C 560 270, 660 300, 760 280",
+                // End points are aligned with the listener avatars below so the
+                // curves actually terminate on them at every breakpoint.
+                "M 400 200 C 260 120, 180 90, 40 58",
+                "M 400 200 C 510 110, 580 60, 640 34",
+                "M 400 200 C 250 260, 150 300, 8 283",
+                "M 400 200 C 520 255, 610 250, 664 258",
               ].map((d, i) => (
                 <g key={i}>
                   <path
@@ -195,8 +206,8 @@ export function ListenTogether() {
                     fill="none"
                     stroke="url(#lt-line)"
                     strokeWidth="1.5"
-                    strokeDasharray="350"
-                    strokeDashoffset="350"
+                    strokeDasharray="600"
+                    strokeDashoffset="600"
                     vectorEffect="non-scaling-stroke"
                     filter="url(#lt-glow)"
                   />
@@ -263,7 +274,9 @@ export function ListenTogether() {
                   onMouseEnter={() => setActiveListener(l.initials)}
                   onMouseLeave={() => setActiveListener(null)}
                   onClick={() => setActiveListener(isHovered ? null : l.initials)}
-                  className="absolute z-20 flex flex-col items-center gap-1.5 cursor-pointer transition-all duration-300 hover:scale-110"
+                  // No `transition-all` here: GSAP animates this element's
+                  // transform/opacity and a CSS transition would fight it.
+                  className="group absolute z-20 flex cursor-pointer flex-col items-center gap-1.5"
                   style={{ left: l.x, top: l.y }}
                 >
                   {/* Avatar */}
@@ -295,7 +308,7 @@ export function ListenTogether() {
           {/* Interactive Room Player Bar */}
           <div
             data-lt-ui
-            className="mx-auto mt-8 w-full max-w-[36rem] rounded-2xl border border-white/[0.08] bg-surface/70 p-4 sm:p-5 backdrop-blur-xl shadow-[0_25px_60px_rgba(0,0,0,0.6)] transition-all duration-300 hover:border-violet-core/30 hover:shadow-[0_30px_70px_rgba(168,85,247,0.15)]"
+            className="mx-auto mt-8 w-full max-w-[36rem] rounded-2xl border border-white/[0.08] bg-surface/70 p-4 backdrop-blur-xl shadow-[0_25px_60px_rgba(0,0,0,0.6)] transition-[border-color,box-shadow] duration-300 hover:border-violet-core/30 hover:shadow-[0_30px_70px_rgba(168,85,247,0.15)] sm:p-5"
           >
             {/* Header */}
             <div className="flex items-center justify-between">

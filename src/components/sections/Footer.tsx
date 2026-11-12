@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Mail, ChevronDown } from "lucide-react";
 import { InstagramIcon, GithubIcon } from "@/components/ui/BrandIcons";
-import { SOCIALS, CREDITS } from "@/lib/constants";
+import { SOCIALS, CREDITS, CREATORS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export function Footer() {
@@ -182,15 +182,20 @@ export function Footer() {
 
           <p className="text-[0.75rem] text-ink-muted">
             Crafted with passion by{" "}
-            <a
-              href={SOCIALS.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-lavender transition-colors duration-300 hover:underline"
-            >
-              Harsh
-              <GithubIcon size={11} className="inline-block" />
-            </a>
+            {CREATORS.map((creator, i) => (
+              <span key={creator.name}>
+                {i > 0 && " & "}
+                <a
+                  href={creator.links.find((l) => l.label === "GitHub")?.href ?? "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-lavender transition-colors duration-300 hover:underline"
+                >
+                  {creator.name.split(" ")[0]}
+                  <GithubIcon size={11} className="inline-block" />
+                </a>
+              </span>
+            ))}
           </p>
         </div>
       </div>

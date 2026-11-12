@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import {
   useScrollReveal,
   useWordScrollReveal,
@@ -99,11 +100,16 @@ export function About() {
             ref={wordScope}
             className="text-[clamp(1.4rem,3.2vw,2.5rem)] font-medium leading-[1.3] tracking-[-0.035em]"
           >
-            {STATEMENT.split(" ").map((word, i) => (
-              <span key={i} data-word className="inline-block text-ink">
-                {word}
-                {" "}
-              </span>
+            {STATEMENT.split(" ").map((word, i, words) => (
+              <Fragment key={i}>
+                <span data-word className="inline-block text-ink">
+                  {word}
+                </span>
+                {/* The separator lives outside the inline-block: trailing
+                    whitespace inside one is trimmed by the browser, which
+                    collapsed every space in the statement. */}
+                {i < words.length - 1 ? " " : null}
+              </Fragment>
             ))}
           </p>
 

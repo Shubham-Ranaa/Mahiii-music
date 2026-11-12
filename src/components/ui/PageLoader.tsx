@@ -467,7 +467,7 @@ export function PageLoader() {
           className="absolute bottom-6 flex items-center gap-2 text-[0.6875rem] text-ink-muted"
         >
           <Sparkles size={12} className="text-violet-core" />
-          <span>Crafted by Harsh · v2.4 Beta</span>
+          <span>Crafted by Harsh &amp; Shubham · v2.4 Beta</span>
         </div>
       </div>
     </div>
