@@ -48,8 +48,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#08080C",
+  themeColor: "#07070b",
   colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -59,7 +61,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       data-scroll-behavior="smooth"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-void text-ink">
+      <body className="min-h-full bg-void text-ink overscroll-contain">
         <PageLoader />
         <ScrollProgress />
         <SmoothScroll />

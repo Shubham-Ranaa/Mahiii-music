@@ -179,7 +179,10 @@ export function InteractiveNowPlaying({
 
       {/* Main Content Area */}
       {viewMode === "player" ? (
-        <div className="flex flex-col px-4 pt-3 flex-1 justify-center">
+        <div
+          key={track.id + "-player"}
+          className="animate-fade-scale-in flex flex-col px-4 pt-3 flex-1 justify-center will-change-transform"
+        >
           <div className="relative mx-auto aspect-square w-full max-w-[210px]">
             {/* Spinning ambient vinyl edge when playing */}
             <div
@@ -220,7 +223,10 @@ export function InteractiveNowPlaying({
         </div>
       ) : (
         /* Lyrics Screen Mode */
-        <div className="flex flex-1 flex-col justify-center space-y-2.5 px-5 pt-3">
+        <div
+          key={track.id + "-lyrics"}
+          className="animate-fade-scale-in flex flex-1 flex-col justify-center space-y-2.5 px-5 pt-3 will-change-transform"
+        >
           <div className="mb-2 flex items-center gap-2 border-b border-white/10 pb-2">
             <AlbumArtwork
               tone={track.tone}

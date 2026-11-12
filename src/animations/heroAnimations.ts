@@ -29,16 +29,10 @@ export function useHeroAnimation() {
         return;
       }
 
-      if (reduced) {
-        gsap.set(q("[data-hero-fade], [data-hero-line] > span"), {
-          opacity: 1,
-          y: 0,
-          clearProps: "transform",
-        });
-        return;
-      }
-
-      const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
+      const tl = gsap.timeline({
+        paused: true,
+        defaults: { ease: "expo.out" },
+      });
 
       tl.from(q("[data-hero-glow]"), {
         opacity: 0,
@@ -48,41 +42,68 @@ export function useHeroAnimation() {
         .from(
           q("[data-hero-wordmark]"),
           { yPercent: 110, opacity: 0, duration: 1.25 },
-          0.15,
+          0.1,
         )
         .from(
           q("[data-hero-line] > span"),
           { yPercent: 108, duration: 1.15, stagger: 0.09 },
-          0.35,
+          0.25,
         )
         .from(
           q("[data-hero-fade]"),
-          { opacity: 0, y: 22, duration: 1, stagger: 0.11 },
-          0.75,
+          { opacity: 0, y: 22, duration: 1, stagger: 0.1 },
+          0.6,
         )
         .from(
           q("[data-hero-phone]"),
-          { opacity: 0, y: 60, scale: 0.92, rotate: -3, duration: 1.5 },
-          0.5,
+          {
+            opacity: 0,
+            y: 80,
+            scale: 0.9,
+            rotate: -4,
+            duration: 1.6,
+            ease: "back.out(1.25)",
+          },
+          0.35,
         )
         .from(
           q("[data-hero-art]"),
           {
             opacity: 0,
-            scale: 0.6,
-            y: 30,
-            duration: 1.1,
+            scale: 0.5,
+            y: 40,
+            duration: 1.25,
             stagger: { each: 0.12, from: "random" },
+            ease: "back.out(1.6)",
           },
-          0.9,
+          0.65,
         )
         .from(
           q("[data-hero-scroll]"),
           { opacity: 0, y: 12, duration: 0.8 },
-          1.5,
+          1.2,
         );
 
-      return () => tl.kill();
+      const triggerHero = () => {
+        if (tl && tl.progress() === 0) {
+          tl.play();
+        }
+      };
+
+      if (typeof window !== "undefined") {
+        window.addEventListener("mahii:loader-exit", triggerHero, { once: true });
+      }
+
+      // Safety fallback: if no loader is present or loader finished before mount
+      const fallbackTimer = setTimeout(triggerHero, 3100);
+
+      return () => {
+        if (typeof window !== "undefined") {
+          window.removeEventListener("mahii:loader-exit", triggerHero);
+        }
+        clearTimeout(fallbackTimer);
+        tl.kill();
+      };
     },
     { scope, dependencies: [reduced] },
   );

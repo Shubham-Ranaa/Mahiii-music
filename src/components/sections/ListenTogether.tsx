@@ -9,10 +9,10 @@ import { AudioWaveform } from "@/components/ui/AudioWaveform";
 import { cn } from "@/lib/utils";
 
 const LISTENERS = [
-  { initials: "AR", name: "Aarav", location: "Mumbai", status: "Synced 0ms", x: "6%", y: "12%" },
-  { initials: "KV", name: "Kavya", location: "Delhi", status: "Added song", x: "78%", y: "6%" },
-  { initials: "NR", name: "Noor", location: "Bengaluru", status: "Listening", x: "2%", y: "68%" },
-  { initials: "SM", name: "Sam", location: "London", status: "Room Host", x: "82%", y: "62%" },
+  { initials: "AR", name: "Aarav", location: "Mumbai", status: "Synced 0ms", x: "5%", y: "10%" },
+  { initials: "KV", name: "Kavya", location: "Delhi", status: "Added song", x: "80%", y: "4%" },
+  { initials: "NR", name: "Noor", location: "Bengaluru", status: "Listening", x: "1%", y: "66%" },
+  { initials: "SM", name: "Sam", location: "London", status: "Room Host", x: "83%", y: "60%" },
 ];
 
 type FloatingReaction = {
@@ -31,11 +31,11 @@ export function ListenTogether() {
 
   const spawnReaction = (emoji: string) => {
     const id = ++reactionIdRef.current;
-    const x = 30 + Math.random() * 40; // Percentage 30% - 70%
-    setReactions((prev) => [...prev.slice(-12), { id, emoji, x }]);
+    const x = 25 + Math.random() * 50;
+    setReactions((prev) => [...prev.slice(-15), { id, emoji, x }]);
     setTimeout(() => {
       setReactions((prev) => prev.filter((r) => r.id !== id));
-    }, 2000);
+    }, 2200);
   };
 
   useGSAP(
@@ -57,7 +57,7 @@ export function ListenTogether() {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: scope.current,
-          start: "top 68%",
+          start: "top 65%",
           once: true,
         },
         defaults: { ease: "power3.out" },
@@ -65,41 +65,41 @@ export function ListenTogether() {
 
       tl.from(q("[data-lt-copy]"), {
         opacity: 0,
-        y: 30,
-        duration: 0.9,
-        stagger: 0.1,
+        y: 25,
+        duration: 0.8,
+        stagger: 0.08,
       })
         .from(
           q("[data-lt-core]"),
-          { opacity: 0, scale: 0.7, duration: 1.1, ease: "expo.out" },
-          0.2,
+          { opacity: 0, scale: 0.65, duration: 1, ease: "expo.out" },
+          0.15,
         )
         .from(
           q("[data-lt-path]"),
           {
-            strokeDashoffset: 320,
-            duration: 1.3,
+            strokeDashoffset: 350,
+            duration: 1.4,
             ease: "power2.inOut",
-            stagger: 0.12,
+            stagger: 0.1,
           },
-          0.55,
+          0.5,
         )
         .from(
           q("[data-lt-listener]"),
           {
             opacity: 0,
-            scale: 0.5,
-            y: 18,
-            duration: 0.8,
-            stagger: 0.14,
-            ease: "back.out(1.6)",
+            scale: 0.4,
+            y: 15,
+            duration: 0.7,
+            stagger: 0.12,
+            ease: "back.out(1.7)",
           },
-          0.7,
+          0.65,
         )
         .from(
           q("[data-lt-ui]"),
-          { opacity: 0, y: 26, duration: 0.9 },
-          1.15,
+          { opacity: 0, y: 22, duration: 0.8 },
+          1.1,
         );
 
       return () => tl.kill();
@@ -111,28 +111,29 @@ export function ListenTogether() {
     <section
       id="listen-together"
       ref={scope}
-      className="relative isolate overflow-hidden border-t border-white/[0.06] py-24 sm:py-32 lg:py-40"
+      className="relative isolate overflow-hidden border-t border-white/[0.05] section-pad"
     >
       {/* Ambient background glow */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[70vh] w-[70vh] -translate-x-1/2 -translate-y-1/2 animate-drift-glow rounded-full blur-[130px]"
+        className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[75vh] w-[75vh] -translate-x-1/2 -translate-y-1/2 animate-drift-glow rounded-full blur-[140px]"
         style={{
           background:
-            "radial-gradient(50% 50% at 50% 50%, rgba(168,85,247,0.24) 0%, rgba(124,58,237,0.08) 45%, transparent 72%)",
+            "radial-gradient(50% 50% at 50% 50%, rgba(168,85,247,0.22) 0%, rgba(124,58,237,0.08) 45%, transparent 72%)",
         }}
       />
 
-      <div className="shell">
-        <div className="mx-auto mb-16 max-w-[46rem] text-center sm:mb-20">
+      <div className="shell relative">
+        {/* Section header - centered */}
+        <div className="mx-auto mb-16 max-w-[44rem] text-center sm:mb-20 lg:mb-24">
           <span data-lt-copy className="type-eyebrow mb-6 inline-block">
             04 — Listen Together
           </span>
           <h2 data-lt-copy className="type-section mb-6 text-ink">
             Distance doesn&apos;t matter when{" "}
-            <span className="text-violet-gradient">music connects us.</span>
+            <span className="text-gradient-violet">music connects us.</span>
           </h2>
-          <p data-lt-copy className="type-lede mx-auto max-w-[52ch]">
+          <p data-lt-copy className="type-lede mx-auto max-w-[50ch]">
             Create a room. Invite your favourite people. Pick a song. Enjoy
             synchronized playback, shared queues and a real-time listening
             experience with friends anywhere in the world.
@@ -140,17 +141,17 @@ export function ListenTogether() {
         </div>
 
         {/* ---------------- Stage ---------------- */}
-        <div className="relative mx-auto max-w-[66rem]">
+        <div className="mx-auto relative max-w-[68rem]">
           {/* Floating Emoji Reactions Layer */}
           <div className="pointer-events-none absolute inset-0 z-40 overflow-hidden">
             {reactions.map((r) => (
               <span
                 key={r.id}
-                className="absolute text-2xl sm:text-3xl animate-in fade-in zoom-in"
+                className="absolute text-2xl sm:text-4xl animate-in fade-in zoom-in"
                 style={{
                   left: `${r.x}%`,
-                  bottom: "35%",
-                  animation: "float-strong 1.8s ease-out forwards",
+                  bottom: "32%",
+                  animation: "float-strong 2s ease-out forwards",
                 }}
               >
                 {r.emoji}
@@ -158,8 +159,9 @@ export function ListenTogether() {
             ))}
           </div>
 
+          {/* Main stage container */}
           <div className="relative aspect-[4/5] w-full sm:aspect-[16/10] lg:aspect-[16/8]">
-            {/* SVG Connection Paths with animated wave pulses */}
+            {/* SVG Connection Paths */}
             <svg
               aria-hidden
               viewBox="0 0 800 400"
@@ -168,10 +170,17 @@ export function ListenTogether() {
             >
               <defs>
                 <linearGradient id="lt-line" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="#A855F7" stopOpacity="0.1" />
-                  <stop offset="50%" stopColor="#C4B5FD" stopOpacity="0.75" />
-                  <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.1" />
+                  <stop offset="0%" stopColor="#A855F7" stopOpacity="0.08" />
+                  <stop offset="40%" stopColor="#C4B5FD" stopOpacity="0.7" />
+                  <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.08" />
                 </linearGradient>
+                <filter id="lt-glow">
+                  <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+                  <feMerge>
+                    <feMergeNode in="coloredBlur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
               </defs>
               {[
                 "M 400 200 C 260 120, 180 90, 60 60",
@@ -186,15 +195,15 @@ export function ListenTogether() {
                     fill="none"
                     stroke="url(#lt-line)"
                     strokeWidth="1.5"
-                    strokeDasharray="320"
-                    strokeDashoffset="320"
+                    strokeDasharray="350"
+                    strokeDashoffset="350"
                     vectorEffect="non-scaling-stroke"
+                    filter="url(#lt-glow)"
                   />
-                  {/* Travelling pulse particle */}
-                  <circle r="3" fill="#C4B5FD">
+                  <circle r="3.5" fill="#C4B5FD" filter="url(#lt-glow)">
                     <animateMotion
                       path={d}
-                      dur={`${3 + i * 0.4}s`}
+                      dur={`${3.5 + i * 0.4}s`}
                       repeatCount="indefinite"
                       rotate="auto"
                     />
@@ -203,37 +212,42 @@ export function ListenTogether() {
               ))}
             </svg>
 
-            {/* Central Stage Element */}
+            {/* Central hub */}
             <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
               <div data-lt-core className="relative">
-                {/* Concentric expanding wave rings */}
+                {/* Expanding wave rings */}
                 <div
                   aria-hidden
-                  className="pointer-events-none absolute -inset-10 rounded-full border border-violet-core/25 animate-ping-slow"
+                  className="pointer-events-none absolute -inset-12 rounded-full border border-violet-core/20 animate-ping-slow"
                 />
                 <div
                   aria-hidden
-                  className="pointer-events-none absolute -inset-5 rounded-full border border-lavender/30 animate-pulse-subtle"
+                  className="pointer-events-none absolute -inset-6 rounded-full border border-lavender/20 animate-pulse-subtle"
                 />
 
+                {/* Glow behind hub */}
                 <div
                   aria-hidden
-                  className="absolute -inset-6 rounded-full blur-2xl"
+                  className="absolute -inset-8 rounded-full blur-3xl"
                   style={{
                     background:
                       "radial-gradient(50% 50% at 50% 50%, rgba(168,85,247,0.55) 0%, transparent 70%)",
+                    animation: "drift-glow 14s ease-in-out infinite",
                   }}
                 />
-                <div className="relative w-[clamp(7.5rem,26vw,13.5rem)]">
+
+                {/* Album artwork hub */}
+                <div className="relative w-[clamp(7rem,24vw,13rem)]">
                   <AlbumArtwork
                     tone="dusk"
                     title=""
                     variant={2}
                     rounded="rounded-2xl"
-                    className="aspect-square w-full shadow-[0_30px_80px_-24px_rgba(168,85,247,0.9)] ring-2 ring-violet-core/50"
+                    className="aspect-square w-full shadow-[0_30px_80px_-24px_rgba(168,85,247,0.9)] ring-2 ring-violet-core/40 transition-transform duration-500 hover:scale-[1.02]"
                   />
-                  <div className="absolute inset-x-3 -bottom-3 rounded-full bg-void/90 px-3 py-1.5 backdrop-blur-md border border-white/10 shadow-lg">
-                    <AudioWaveform bars={16} height={14} animated={isPlaying} />
+                  {/* Waveform badge */}
+                  <div className="absolute inset-x-4 -bottom-4 rounded-full bg-void/90 px-4 py-2 backdrop-blur-md border border-white/10 shadow-lg">
+                    <AudioWaveform bars={20} height={16} animated={isPlaying} />
                   </div>
                 </div>
               </div>
@@ -249,22 +263,25 @@ export function ListenTogether() {
                   onMouseEnter={() => setActiveListener(l.initials)}
                   onMouseLeave={() => setActiveListener(null)}
                   onClick={() => setActiveListener(isHovered ? null : l.initials)}
-                  className="absolute z-20 flex flex-col items-center gap-1.5 cursor-pointer transition-transform duration-300 hover:scale-110"
+                  className="absolute z-20 flex flex-col items-center gap-1.5 cursor-pointer transition-all duration-300 hover:scale-110"
                   style={{ left: l.x, top: l.y }}
                 >
-                  <span className="relative grid h-[clamp(2.5rem,5vw,3.25rem)] w-[clamp(2.5rem,5vw,3.25rem)] place-items-center rounded-full bg-gradient-to-br from-violet-core to-violet-deep text-[0.6875rem] font-semibold text-white ring-2 ring-void shadow-[0_8px_24px_-8px_rgba(168,85,247,0.85)]">
+                  {/* Avatar */}
+                  <span className="relative grid h-[clamp(2.25rem,4.5vw,3rem)] w-[clamp(2.25rem,4.5vw,3rem)] place-items-center rounded-full bg-gradient-to-br from-violet-core to-violet-deep text-[0.6875rem] font-semibold text-white ring-2 ring-void shadow-[0_8px_24px_-8px_rgba(168,85,247,0.85)] transition-transform duration-300 group-hover:scale-110">
                     {l.initials}
-                    <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-void" />
+                    {/* Status indicator */}
+                    <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-void animate-pulse" />
                   </span>
+                  {/* Name */}
                   <span className="text-[0.625rem] font-medium tracking-wide text-ink">
                     {l.name}
                   </span>
 
-                  {/* Tooltip on Hover/Tap */}
+                  {/* Tooltip */}
                   <div
                     className={cn(
-                      "absolute top-full mt-1.5 rounded-lg border border-white/15 bg-void/90 px-2.5 py-1 text-center backdrop-blur-md shadow-xl transition-all duration-200 whitespace-nowrap z-30",
-                      isHovered ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1 pointer-events-none",
+                      "absolute top-full mt-2 rounded-lg border border-white/15 bg-void/95 px-3 py-1.5 text-center backdrop-blur-xl shadow-xl transition-all duration-300 z-30",
+                      isHovered ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none",
                     )}
                   >
                     <p className="text-[0.625rem] font-semibold text-lavender">{l.location}</p>
@@ -278,11 +295,12 @@ export function ListenTogether() {
           {/* Interactive Room Player Bar */}
           <div
             data-lt-ui
-            className="mx-auto mt-10 w-full max-w-[34rem] rounded-2xl border border-white/[0.1] bg-surface/80 p-4 sm:p-5 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
+            className="mx-auto mt-8 w-full max-w-[36rem] rounded-2xl border border-white/[0.08] bg-surface/70 p-4 sm:p-5 backdrop-blur-xl shadow-[0_25px_60px_rgba(0,0,0,0.6)] transition-all duration-300 hover:border-violet-core/30 hover:shadow-[0_30px_70px_rgba(168,85,247,0.15)]"
           >
+            {/* Header */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <span className="flex items-center gap-1.5 rounded-full bg-emerald-400/15 px-2 py-0.5 text-[0.5625rem] font-medium text-emerald-300">
+                <span className="flex items-center gap-1.5 rounded-full bg-emerald-400/15 px-2.5 py-1 text-[0.5625rem] font-medium text-emerald-300">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   Live Sync
                 </span>
@@ -295,13 +313,14 @@ export function ListenTogether() {
               </span>
             </div>
 
+            {/* Track info */}
             <div className="mt-4 flex items-center gap-3.5">
               <AlbumArtwork
                 tone="dusk"
                 title=""
                 variant={1}
                 rounded="rounded-lg"
-                className="h-12 w-12 shrink-0 shadow-md ring-1 ring-white/10"
+                className="h-12 w-12 shrink-0 shadow-md ring-1 ring-white/10 transition-transform duration-300 hover:scale-[1.03]"
               />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[0.8125rem] font-semibold text-ink">
@@ -312,12 +331,12 @@ export function ListenTogether() {
                 </p>
               </div>
 
-              {/* Play/Pause Button */}
+              {/* Play/Pause */}
               <button
                 type="button"
                 onClick={() => setIsPlaying(!isPlaying)}
                 aria-label={isPlaying ? "Pause room playback" : "Resume room playback"}
-                className="grid h-9 w-9 place-items-center rounded-full bg-ink text-void shadow-md transition-transform hover:scale-105 active:scale-95"
+                className="grid h-9 w-9 place-items-center rounded-full bg-ink text-void shadow-md transition-all duration-300 hover:scale-105 active:scale-95"
               >
                 {isPlaying ? (
                   <Pause size={14} className="fill-void text-void" />
@@ -327,30 +346,31 @@ export function ListenTogether() {
               </button>
             </div>
 
-            <div className="mt-3.5 h-[3px] w-full overflow-hidden rounded-full bg-white/10">
+            {/* Progress bar */}
+            <div className="mt-3 h-[3px] w-full overflow-hidden rounded-full bg-white/10">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-violet-deep via-violet-core to-lavender transition-all duration-300"
                 style={{ width: isPlaying ? "54%" : "54%" }}
               />
             </div>
 
-            {/* Interactive Live Reactions Dock */}
-            <div className="mt-4 flex items-center justify-between border-t border-white/[0.08] pt-3">
+            {/* Live reactions */}
+            <div className="mt-4 flex items-center justify-between border-t border-white/[0.06] pt-3.5">
               <span className="text-[0.625rem] text-ink-muted">Send reaction:</span>
               <div className="flex items-center gap-2">
                 {[
-                  { icon: Heart, label: "❤️" },
-                  { icon: Flame, label: "🔥" },
-                  { icon: Music, label: "🎵" },
-                  { icon: Zap, label: "⚡" },
-                  { icon: Sparkles, label: "✨" },
+                  { label: "❤️" },
+                  { label: "🔥" },
+                  { label: "🎵" },
+                  { label: "⚡" },
+                  { label: "✨" },
                 ].map(({ label }) => (
                   <button
                     key={label}
                     type="button"
                     onClick={() => spawnReaction(label)}
                     aria-label={`Send ${label} reaction`}
-                    className="grid h-7 w-7 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-xs transition-transform hover:scale-125 hover:border-violet-core/50 active:scale-90"
+                    className="grid h-7 w-7 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-xs transition-all duration-300 hover:scale-125 hover:border-violet-core/50 hover:bg-violet-core/10 hover:text-lavender active:scale-90"
                   >
                     {label}
                   </button>
@@ -359,10 +379,10 @@ export function ListenTogether() {
             </div>
           </div>
 
+          {/* Caption */}
           <p className="mt-8 text-center text-[0.9375rem] font-medium tracking-tight text-lavender/90">
             Your people. Your playlist. Your moments.
           </p>
-
           <p className="mt-2 text-center text-[0.75rem] text-ink-muted">
             Tap avatars to see listener details · Tap emojis to send reactions in real-time
           </p>

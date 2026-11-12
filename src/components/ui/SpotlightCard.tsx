@@ -1,60 +1,51 @@
 "use client";
 
-import { useRef, useState, type ReactNode, type MouseEvent } from "react";
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-/**
- * SpotlightCard wraps children with a dynamic cursor light spotlight beam.
- * As the user moves their mouse over the card, a subtle radial gradient
- * illuminates the borders and frosted glass surface.
- */
+type SpotlightCardProps = {
+  children: ReactNode;
+  className?: string;
+  intent?: "default" | "violet" | "emerald" | "amber";
+};
+
 export function SpotlightCard({
   children,
   className,
-  spotlightColor = "rgba(168, 85, 247, 0.18)",
-}: {
-  children: ReactNode;
-  className?: string;
-  spotlightColor?: string;
-}) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [opacity, setOpacity] = useState(0);
-
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    setPosition({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
+  intent = "default",
+}: SpotlightCardProps) {
+  const borderColors: Record<string, string> = {
+    default: "border-white/[0.06]",
+    violet: "border-violet-core/30",
+    emerald: "border-emerald-400/30",
+    amber: "border-amber-400/30",
   };
 
-  const handleMouseEnter = () => setOpacity(1);
-  const handleMouseLeave = () => setOpacity(0);
+  const bgColors: Record<string, string> = {
+    default: "bg-white/[0.02]",
+    violet: "bg-violet-core/[0.04]",
+    emerald: "bg-emerald-400/[0.04]",
+    amber: "bg-amber-400/[0.04]",
+  };
+
+  const glowShadows: Record<string, string> = {
+    default: "shadow-[0_10px_30px_-10px_rgba(0,0,0,0.4)]",
+    violet: "shadow-[0_10px_30px_-10px_rgba(168,85,247,0.3)]",
+    emerald: "shadow-[0_10px_30px_-10px_rgba(52,211,153,0.3)]",
+    amber: "shadow-[0_10px_30px_-10px_rgba(251,191,36,0.3)]",
+  };
 
   return (
     <div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
       className={cn(
-        "relative isolate overflow-hidden rounded-3xl border border-white/[0.08] bg-surface/60 backdrop-blur-xl transition-all duration-300",
+        "rounded-xl border bg-backdrop-blur-sm backdrop-blur-md transition-all duration-400",
+        borderColors[intent],
+        bgColors[intent],
+        glowShadows[intent],
         className,
       )}
     >
-      {/* Light spotlight beam */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -inset-px transition-opacity duration-300 -z-10"
-        style={{
-          opacity,
-          background: `radial-gradient(400px circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 65%)`,
-        }}
-      />
       {children}
     </div>
   );
 }
-

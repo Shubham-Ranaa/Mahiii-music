@@ -13,13 +13,13 @@ type ButtonLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
 };
 
 const base =
-  "group relative inline-flex items-center justify-center gap-2.5 rounded-full font-medium tracking-tight transition-[background-color,color,border-color,transform,box-shadow] duration-300 ease-out active:scale-[0.985] select-none focus-visible:ring-2 focus-visible:ring-lavender focus-visible:ring-offset-2 focus-visible:ring-offset-void";
+  "group relative inline-flex items-center justify-center gap-2.5 rounded-full font-medium tracking-tight transition-all duration-300 ease-out active:scale-[0.98] select-none focus-visible:ring-2 focus-visible:ring-violet-bright focus-visible:ring-offset-2 focus-visible:ring-offset-void";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-ink text-void hover:bg-white hover:shadow-[0_14px_30px_-18px_rgba(255,255,255,0.22)]",
+    "bg-gradient-to-r from-violet-core to-violet-deep text-white shadow-[0_0_25px_rgba(168,85,247,0.4)] hover:shadow-[0_0_40px_rgba(168,85,247,0.6)] hover:scale-[1.02]",
   outline:
-    "border border-white/15 text-ink hover:border-white/35 hover:bg-white/[0.04] hover:shadow-[0_12px_28px_-18px_rgba(255,255,255,0.18)]",
+    "border border-white/15 text-ink hover:border-violet-core/50 hover:bg-white/[0.04] hover:shadow-[0_0_20px_rgba(168,85,247,0.2)]",
   ghost: "text-ink-soft hover:text-ink hover:bg-white/[0.04]",
 };
 
@@ -49,6 +49,10 @@ export function ButtonLink({
         : {})}
       {...rest}
     >
+      {/* Background shine effect */}
+      {variant === "primary" && (
+        <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      )}
       {children}
     </a>
   );
@@ -72,6 +76,9 @@ export function Button({
       className={cn(base, variants[variant], sizes[size], className)}
       {...rest}
     >
+      {variant === "primary" && (
+        <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      )}
       {children}
     </button>
   );

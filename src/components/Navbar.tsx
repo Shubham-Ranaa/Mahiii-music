@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Menu, X, ArrowUpRight, QrCode, Search } from "lucide-react";
-import { NAV_LINKS, DOWNLOAD_URL, DOWNLOAD_SECTION_ID, IS_EXTERNAL_DOWNLOAD, SOCIALS } from "@/lib/constants";
+import { Menu, X, ArrowUpRight, QrCode } from "lucide-react";
+import { NAV_LINKS, DOWNLOAD_URL, IS_EXTERNAL_DOWNLOAD, SOCIALS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { ButtonLink } from "@/components/ui/Button";
-import { AmbientAudioButton } from "@/components/ui/AmbientAudio";
 import { DownloadQRModal } from "@/components/ui/DownloadQRModal";
-import { CommandPalette } from "@/components/ui/CommandPalette";
 import { MobileActionBar } from "@/components/ui/MobileActionBar";
 import { InstagramIcon, GithubIcon } from "@/components/ui/BrandIcons";
 
@@ -16,12 +14,11 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<string>("");
   const [qrOpen, setQrOpen] = useState(false);
-  const [cmdOpen, setCmdOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  /* Scrolled state: swap to a blurred surface */
+  /* Scrolled state with smoother threshold */
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > 20);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -34,26 +31,33 @@ export function Navbar() {
     );
     if (!sections.length) return;
 
+    let activeTimeout: NodeJS.Timeout;
     const observer = new IntersectionObserver(
       (entries) => {
+        clearTimeout(activeTimeout);
         const visible = entries
           .filter((e) => e.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible?.target.id) setActive(`#${visible.target.id}`);
+        if (visible?.target.id) {
+          activeTimeout = setTimeout(() => setActive(`#${visible.target.id}`), 50);
+        }
       },
-      { rootMargin: "-45% 0px -50% 0px", threshold: [0, 0.25, 0.6] },
+      { rootMargin: "-40% 0px -55% 0px", threshold: [0, 0.25, 0.6] },
     );
 
     sections.forEach((s) => observer.observe(s));
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      clearTimeout(activeTimeout);
+    };
   }, []);
 
-  /* Global Keyboard Shortcut for Command Palette: Cmd+K / Ctrl+K */
+  /* Global keyboard handling */
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        setCmdOpen((prev) => !prev);
+      if (e.key === "Escape") {
+        setQrOpen(false);
+        setOpen(false);
       }
     };
     window.addEventListener("keydown", onKeyDown);
@@ -66,14 +70,8 @@ export function Navbar() {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-
     return () => {
       document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
     };
   }, [open]);
 
@@ -83,10 +81,10 @@ export function Navbar() {
     <>
       <header
         className={cn(
-          "fixed inset-x-0 top-0 z-50 transition-all duration-500",
+          "fixed inset-x-0 top-0 z-50 transition-all duration-500 ease-out",
           scrolled
-            ? "border-b border-white/[0.08] bg-void/75 backdrop-blur-2xl shadow-[0_4px_30px_rgba(0,0,0,0.5)]"
-            : "border-b border-transparent bg-transparent",
+            ? "border-b border-white/[0.06] bg-void/80 backdrop-blur-2xl shadow-[0_4px_30px_-10px_rgba(0,0,0,0.5)]"
+            : "border-b border-transparent bg-transparent"
         )}
       >
         <nav
@@ -96,40 +94,40 @@ export function Navbar() {
           {/* Logo */}
           <a
             href="#top"
-            className="group flex items-center gap-2.5 shrink-0"
+            className="group flex items-center gap-2.5 shrink-0 transition-transform duration-300 hover:scale-[1.02]"
             aria-label="MAHII home"
           >
-            <span className="relative grid h-7 w-7 place-items-center">
-              <span className="absolute inset-0 rounded-[9px] bg-gradient-to-br from-violet-core to-violet-deep opacity-90 transition-transform duration-500 group-hover:rotate-[18deg] group-hover:scale-110 shadow-[0_0_15px_rgba(168,85,247,0.5)]" />
-              <span className="relative h-[7px] w-[7px] rounded-full bg-void" />
-            </span>
-            <div className="flex flex-col">
-              <span className="text-[0.9375rem] font-semibold tracking-[0.18em] text-ink leading-tight">
+            <div className="relative grid h-7 w-7 place-items-center transition-transform duration-500 group-hover:rotate-[12deg] group-hover:scale-110">
+              <span className="absolute inset-0 rounded-[10px] bg-gradient-to-br from-violet-core via-violet-bright to-violet-deep opacity-85 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(168,85,247,0.6)]" />
+              <span className="relative h-[6px] w-[6px] rounded-full bg-void ring-1 ring-white/10" />
+            </div>
+            <div>
+              <span className="text-[0.9375rem] font-semibold tracking-[0.2em] text-ink leading-tight">
                 MAHII
               </span>
-              <span className="hidden font-mono text-[0.45rem] tracking-[0.12em] text-lavender/70 sm:inline-block">
+              <span className="hidden font-mono text-[0.45rem] tracking-[0.14em] text-violet-core/70 sm:inline-block">
                 ANDROID AUDIO
               </span>
             </div>
           </a>
 
           {/* Desktop Navigation Links */}
-          <ul className="hidden items-center gap-1 rounded-full border border-white/[0.06] bg-surface/50 px-3 py-1 backdrop-blur-md lg:flex">
+          <ul className="hidden items-center gap-1 rounded-full border border-white/[0.05] bg-white/[0.02] px-2 py-1 backdrop-blur-xl lg:flex">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <a
                   href={link.href}
                   className={cn(
-                    "relative rounded-full px-3 py-1.5 text-[0.8125rem] tracking-tight transition-all duration-300",
+                    "relative rounded-full px-4 py-1.5 text-[0.8125rem] tracking-tight transition-all duration-300",
                     active === link.href
                       ? "text-ink font-medium"
-                      : "text-ink-soft hover:text-ink hover:bg-white/[0.04]",
+                      : "text-ink-soft hover:text-ink hover:bg-white/[0.04]"
                   )}
                 >
                   {link.label}
                   {active === link.href && (
                     <span
-                      className="absolute inset-x-3 -bottom-1 h-[2px] rounded-full bg-gradient-to-r from-violet-core via-lavender to-violet-deep shadow-[0_0_8px_rgba(168,85,247,0.8)]"
+                      className="absolute inset-x-4 -bottom-0.5 h-[2px] rounded-full bg-gradient-to-r from-violet-core via-violet-bright to-violet-deep shadow-[0_0_10px_rgba(168,85,247,0.8)]"
                       aria-hidden
                     />
                   )}
@@ -140,41 +138,26 @@ export function Navbar() {
 
           {/* Right Action Cluster */}
           <div className="flex items-center gap-2">
-            {/* Quick Command Palette Button (Desktop) */}
-            <button
-              type="button"
-              onClick={() => setCmdOpen(true)}
-              className="hidden sm:inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-ink-muted transition-all hover:border-violet-core/50 hover:bg-white/[0.06] hover:text-ink"
-            >
-              <Search size={13} className="text-violet-core" />
-              <span className="hidden md:inline">Search</span>
-              <kbd className="font-mono text-[0.625rem] bg-white/[0.08] px-1.5 py-0.5 rounded border border-white/10 text-lavender">
-                ⌘K
-              </kbd>
-            </button>
-
-            {/* Ambient Audio Vibe Toggle */}
-            <AmbientAudioButton />
-
-            {/* QR Code Quick Modal Trigger (Desktop) */}
+            {/* QR Code Modal Trigger (Desktop) */}
             <button
               type="button"
               onClick={() => setQrOpen(true)}
               title="Scan QR Code to install on phone"
               aria-label="Scan QR Code to install on phone"
-              className="hidden md:grid h-10 w-10 place-items-center rounded-full border border-white/12 text-ink-muted transition-all hover:border-violet-core/50 hover:bg-white/[0.04] hover:text-ink hover:shadow-[0_0_15px_rgba(168,85,247,0.25)]"
+              className="hidden md:grid h-9 w-9 place-items-center rounded-full border border-white/[0.08] text-ink-muted transition-all duration-300 hover:border-violet-core/50 hover:bg-white/[0.04] hover:text-ink hover:shadow-[0_0_15px_rgba(168,85,247,0.2)]"
             >
-              <QrCode size={16} />
+              <QrCode size={15} />
             </button>
 
-            {/* Main Download Button */}
+            {/* Download Button */}
             <ButtonLink
               href={DOWNLOAD_URL}
               external={IS_EXTERNAL_DOWNLOAD}
-              className="hidden sm:inline-flex shadow-[0_0_20px_rgba(255,255,255,0.12)] hover:shadow-[0_0_25px_rgba(168,85,247,0.35)]"
+              className="hidden sm:inline-flex rounded-full bg-gradient-to-r from-violet-core to-violet-deep px-5 py-2 text-sm font-medium text-white shadow-[0_0_25px_rgba(168,85,247,0.4)] transition-all duration-300 hover:shadow-[0_0_35px_rgba(168,85,247,0.6)] hover:scale-[1.02] active:scale-[0.98]"
               size="md"
             >
               Get App
+              <ArrowUpRight size={14} strokeWidth={2} className="ml-0.5" />
             </ButtonLink>
 
             {/* Mobile Hamburger Button */}
@@ -184,55 +167,53 @@ export function Navbar() {
               aria-label="Open menu"
               aria-expanded={open}
               aria-controls="mobile-menu"
-              className="grid h-10 w-10 place-items-center rounded-full border border-white/12 text-ink transition-colors hover:border-white/30 lg:hidden"
+              className="grid h-9 w-9 place-items-center rounded-full border border-white/[0.08] text-ink transition-colors duration-300 hover:border-white/30 lg:hidden"
             >
-              <Menu size={18} strokeWidth={1.75} />
+              <Menu size={17} strokeWidth={1.75} />
             </button>
           </div>
         </nav>
       </header>
 
-      {/* QR Code Modal for Desktop */}
+      {/* QR Code Modal */}
       <DownloadQRModal isOpen={qrOpen} onClose={() => setQrOpen(false)} />
 
-      {/* Command Palette */}
-      <CommandPalette isOpen={cmdOpen} onClose={() => setCmdOpen(false)} />
-
       {/* Mobile Floating Action Bar */}
-      <MobileActionBar onOpenCommand={() => setCmdOpen(true)} />
+      <MobileActionBar />
 
       {/* Mobile Drawer Overlay */}
       <div
         id="mobile-menu"
         ref={panelRef}
         className={cn(
-          "fixed inset-0 z-[60] overflow-y-auto lg:hidden",
-          open ? "pointer-events-auto" : "pointer-events-none",
+          "fixed inset-0 z-[60] overflow-y-auto lg:hidden transition-opacity duration-500",
+          open ? "opacity-100" : "opacity-0 pointer-events-none",
         )}
         aria-hidden={!open}
       >
         <div
           onClick={close}
           className={cn(
-            "absolute inset-0 bg-void/90 backdrop-blur-2xl transition-opacity duration-500",
+            "absolute inset-0 bg-void/95 backdrop-blur-2xl transition-opacity duration-500",
             open ? "opacity-100" : "opacity-0",
           )}
         />
 
         <div
           className={cn(
-            "pointer-events-none relative flex h-full flex-col transition-all duration-500",
-            open ? "translate-y-0 opacity-100" : "-translate-y-3 opacity-0",
+            "relative flex h-full flex-col transition-all duration-500 ease-out lg:hidden",
+            open ? "translate-y-0 opacity-100" : "-translate-y-4 opacity-0",
           )}
-          style={{ transitionTimingFunction: "cubic-bezier(0.16,1,0.3,1)" }}
+          style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
         >
-          <div className="pointer-events-auto shell flex h-[var(--nav-h)] shrink-0 items-center justify-between border-b border-white/[0.06]">
-            <div className="flex items-center gap-2">
-              <span className="relative grid h-7 w-7 place-items-center">
-                <span className="absolute inset-0 rounded-[8px] bg-gradient-to-br from-violet-core to-violet-deep" />
-                <span className="relative h-1.5 w-1.5 rounded-full bg-void" />
-              </span>
-              <span className="text-[0.9375rem] font-semibold tracking-[0.18em]">
+          {/* Header */}
+          <div className="flex h-[var(--nav-h)] shrink-0 items-center justify-between border-b border-white/[0.05] bg-void/80 backdrop-blur-xl px-5">
+            <div className="flex items-center gap-2.5">
+              <div className="relative grid h-7 w-7 place-items-center">
+                <span className="absolute inset-0 rounded-[9px] bg-gradient-to-br from-violet-core via-violet-bright to-violet-deep" />
+                <span className="relative h-[5px] w-[5px] rounded-full bg-void ring-1 ring-white/10" />
+              </div>
+              <span className="text-[0.9375rem] font-semibold tracking-[0.2em] text-ink">
                 MAHII
               </span>
             </div>
@@ -240,43 +221,25 @@ export function Navbar() {
               type="button"
               onClick={close}
               aria-label="Close menu"
-              className="grid h-10 w-10 place-items-center rounded-full border border-white/12 text-ink"
+              className="grid h-8 w-8 place-items-center rounded-full border border-white/[0.08] text-ink transition-colors hover:border-white/30"
             >
-              <X size={18} strokeWidth={1.75} />
+              <X size={17} strokeWidth={1.75} />
             </button>
           </div>
 
-          <nav
-            aria-label="Mobile"
-            className="shell pointer-events-auto flex flex-1 flex-col justify-between py-6 overflow-y-auto"
-          >
+          {/* Mobile nav links */}
+          <nav aria-label="Mobile" className="flex flex-1 flex-col justify-center px-5 py-6">
             <div className="flex flex-col gap-1">
-              {/* Search button in mobile menu */}
-              <button
-                type="button"
-                onClick={() => {
-                  close();
-                  setTimeout(() => setCmdOpen(true), 200);
-                }}
-                className="mb-3 flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] p-3.5 text-left text-ink-soft hover:text-ink"
-              >
-                <span className="flex items-center gap-2.5 text-sm">
-                  <Search size={16} className="text-violet-core" />
-                  <span>Search commands &amp; sections</span>
-                </span>
-                <span className="font-mono text-[0.625rem] text-ink-muted">⌘K</span>
-              </button>
-
               {NAV_LINKS.map((link, i) => (
                 <a
                   key={link.href}
                   href={link.href}
                   onClick={close}
-                  className="group flex items-center justify-between border-b border-white/[0.06] py-3.5 text-[1.45rem] font-medium tracking-tight text-ink transition-colors hover:text-lavender"
+                  className="group flex items-center justify-between rounded-xl border-b border-white/[0.04] py-4 text-[1.375rem] font-medium tracking-tight text-ink transition-all duration-300"
                   style={{
-                    transitionDelay: open ? `${60 + i * 40}ms` : "0ms",
+                    transitionDelay: open ? `${60 + i * 45}ms` : "0ms",
                     opacity: open ? 1 : 0,
-                    transform: open ? "translateY(0)" : "translateY(12px)",
+                    transform: open ? "translateY(0)" : "translateY(16px)",
                     transitionProperty: "opacity, transform, color",
                     transitionDuration: "500ms",
                   }}
@@ -284,31 +247,33 @@ export function Navbar() {
                   <span className="group-hover:translate-x-1.5 transition-transform duration-300">
                     {link.label}
                   </span>
-                  <span className="font-mono text-[0.625rem] tracking-[0.2em] text-ink-muted">
-                    {String(i + 1).padStart(2, "0")}
+                  <span className="font-mono text-[0.5625rem] tracking-[0.2em] text-ink-muted transition-colors duration-300 group-hover:text-violet-core">
+                    {link.href.replace("#", "")}
                   </span>
                 </a>
               ))}
 
-              <div className="pt-6">
+              <div className="mt-6 pt-4 border-t border-white/[0.05]">
                 <ButtonLink
                   href={DOWNLOAD_URL}
                   external={IS_EXTERNAL_DOWNLOAD}
                   size="lg"
                   onClick={close}
-                  className="w-full shadow-[0_0_25px_rgba(168,85,247,0.35)]"
+                  className="w-full rounded-full bg-gradient-to-r from-violet-core to-violet-deep px-6 py-3.5 text-base font-medium text-white shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-all duration-300 hover:shadow-[0_0_40px_rgba(168,85,247,0.6)]"
                 >
                   Download for Android
-                  <ArrowUpRight size={16} strokeWidth={2} />
+                  <ArrowUpRight size={16} strokeWidth={2} className="ml-1" />
                 </ButtonLink>
-                <p className="mt-2 text-center text-[0.6875rem] text-ink-muted">
+                <p className="mt-3 text-center text-[0.6875rem] text-ink-muted tracking-wide">
                   Android 8.0+ · Personal Build · GPL-3.0
                 </p>
               </div>
             </div>
+          </nav>
 
-            {/* Mobile Footer Area */}
-            <div className="pt-6 border-t border-white/[0.08] flex items-center justify-between">
+          {/* Mobile Footer */}
+          <div className="border-t border-white/[0.05] px-5 py-5">
+            <div className="flex items-center justify-between">
               <span className="text-xs text-ink-muted">Follow development</span>
               <div className="flex items-center gap-3">
                 <a
@@ -316,7 +281,7 @@ export function Navbar() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Harsh's Instagram profile"
-                  className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-ink-soft hover:text-white"
+                  className="grid h-8 w-8 place-items-center rounded-full border border-white/[0.08] text-ink-soft transition-all duration-300 hover:text-white hover:border-violet-core/50 hover:shadow-[0_0_15px_rgba(168,85,247,0.3)]"
                 >
                   <InstagramIcon size={14} />
                 </a>
@@ -325,13 +290,13 @@ export function Navbar() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Harsh's GitHub profile"
-                  className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-ink-soft hover:text-white"
+                  className="grid h-8 w-8 place-items-center rounded-full border border-white/[0.08] text-ink-soft transition-all duration-300 hover:text-white hover:border-violet-core/50 hover:shadow-[0_0_15px_rgba(168,85,247,0.3)]"
                 >
                   <GithubIcon size={14} />
                 </a>
               </div>
             </div>
-          </nav>
+          </div>
         </div>
       </div>
     </>

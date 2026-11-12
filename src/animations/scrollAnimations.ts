@@ -32,14 +32,14 @@ export function useScrollReveal<T extends HTMLElement = HTMLElement>() {
       if (fadeTargets.length) {
         gsap.from(fadeTargets, {
           opacity: 0,
-          y: 34,
-          duration: 1,
+          y: 36,
+          duration: 1.05,
           ease: "power3.out",
-          stagger: 0.09,
+          stagger: 0.08,
           scrollTrigger: {
             trigger: scope.current,
-            start: "top 78%",
-            once: true,
+            start: "top 82%",
+            toggleActions: "play none none reverse",
           },
         });
       }
@@ -48,13 +48,13 @@ export function useScrollReveal<T extends HTMLElement = HTMLElement>() {
       if (lineTargets.length) {
         gsap.from(lineTargets, {
           yPercent: 110,
-          duration: 1.05,
+          duration: 1.1,
           ease: "expo.out",
           stagger: 0.07,
           scrollTrigger: {
             trigger: scope.current,
-            start: "top 80%",
-            once: true,
+            start: "top 84%",
+            toggleActions: "play none none reverse",
           },
         });
       }

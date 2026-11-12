@@ -53,39 +53,60 @@ export function DesignPhilosophy() {
   return (
     <section
       ref={scope}
-      className="relative isolate overflow-hidden border-t border-white/[0.06] py-24 sm:py-32 lg:flex lg:min-h-screen lg:flex-col lg:justify-center lg:py-0"
+      className="relative isolate overflow-hidden border-t border-white/[0.05] section-pad lg:flex lg:min-h-screen lg:flex-col lg:justify-center lg:py-0"
     >
-      <div className="shell mb-14 lg:mb-16">
+      {/* Subtle ambient glow */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 opacity-30"
+      >
+        <div
+          className="absolute left-1/2 top-1/2 h-[60vh] w-[60vh] -translate-x-1/2 -translate-y-1/2 animate-drift-glow rounded-full blur-[150px]"
+          style={{
+            background:
+              "radial-gradient(50% 50% at 50% 50%, rgba(168,85,247,0.12) 0%, transparent 70%)",
+          }}
+        />
+      </div>
+
+      {/* Section header */}
+      <div className="shell mb-16 lg:mb-20">
         <div className="mb-6 flex items-center gap-4">
           <span className="type-eyebrow">06 — Design Principles</span>
-          <span className="hairline flex-1" />
+          <span className="flex-1 hairline" />
         </div>
-        <h2 className="type-section max-w-[16ch] text-ink">
-          Every detail <span className="text-violet-gradient">matters.</span>
+        <h2 className="type-section max-w-[15ch]">
+          Every detail{" "}
+          <span className="text-gradient-violet">matters.</span>
         </h2>
       </div>
 
-      {/* Desktop: horizontal track */}
-      <div className="hidden overflow-hidden lg:block">
-        <div ref={trackRef} className="flex gap-6 pl-[clamp(1.25rem,4vw,3.5rem)] pr-24 will-change-transform">
+      {/* Desktop: horizontal scroll track */}
+      <div className="hidden lg:block">
+        <div
+          ref={trackRef}
+          className="flex gap-6 pl-[clamp(1.25rem,5vw,4rem)] pr-28 will-change-transform"
+        >
           {DESIGN_PRINCIPLES.map((p, idx) => {
             const Icon = PRINCIPLE_ICONS[idx % PRINCIPLE_ICONS.length];
             return (
               <article
                 key={p.index}
-                className="group relative flex w-[24rem] shrink-0 flex-col justify-between overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-b from-surface via-abyss to-void p-8 shadow-[0_20px_50px_rgba(0,0,0,0.6)] transition-all duration-300 hover:border-violet-core/50 hover:shadow-[0_20px_60px_-15px_rgba(168,85,247,0.35)]"
+                className="group relative flex w-[25rem] shrink-0 flex-col justify-between overflow-hidden rounded-3xl border border-white/[0.06] bg-gradient-to-b from-surface via-abyss to-void p-8 shadow-[0_25px_60px_rgba(0,0,0,0.6)] transition-all duration-500 hover:border-violet-core/50 hover:shadow-[0_30px_70px_-15px_rgba(168,85,247,0.35)]"
               >
+                {/* Background accent glow */}
                 <div
                   aria-hidden
-                  className="absolute -right-10 -top-10 h-44 w-44 rounded-full blur-3xl opacity-70 transition-transform duration-500 group-hover:scale-125"
+                  className="absolute -right-12 -top-12 h-52 w-52 rounded-full blur-3xl opacity-60 transition-transform duration-500 group-hover:scale-125"
                   style={{
-                    background: `radial-gradient(50% 50% at 50% 50%, ${p.accent}50 0%, transparent 70%)`,
+                    background: `radial-gradient(50% 50% at 50% 50%, ${p.accent}40 0%, transparent 70%)`,
                   }}
                 />
 
                 <div className="relative">
+                  {/* Header */}
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-[0.625rem] tracking-[0.2em] text-ink-muted">
+                    <span className="font-mono text-[0.625rem] tracking-[0.22em] text-ink-muted">
                       PRINCIPLE {p.index}
                     </span>
                     <span
@@ -96,14 +117,18 @@ export function DesignPhilosophy() {
                     </span>
                   </div>
 
-                  <h3 className="mt-8 text-[1.75rem] font-medium leading-tight tracking-tight text-ink group-hover:text-lavender transition-colors">
+                  {/* Title */}
+                  <h3 className="mt-8 text-[1.8rem] font-medium leading-tight tracking-tight text-ink group-hover:text-lavender transition-colors duration-300">
                     {p.title}
                   </h3>
+
+                  {/* Description */}
                   <p className="mt-4 text-[0.9375rem] leading-relaxed text-ink-soft">
                     {p.body}
                   </p>
                 </div>
 
+                {/* Bottom accent line */}
                 <div
                   aria-hidden
                   className="relative mt-10 h-px w-full"
@@ -117,7 +142,7 @@ export function DesignPhilosophy() {
         </div>
       </div>
 
-      {/* Mobile: Interactive Accordion & Timeline */}
+      {/* Mobile: accordion */}
       <div className="shell lg:hidden">
         <ol className="flex flex-col gap-3">
           {DESIGN_PRINCIPLES.map((p, idx) => {
@@ -128,10 +153,10 @@ export function DesignPhilosophy() {
               <li
                 key={p.index}
                 className={cn(
-                  "rounded-2xl border p-5 transition-all duration-300",
+                  "rounded-2xl border p-5 transition-all duration-400",
                   isExpanded
-                    ? "border-violet-core/40 bg-surface/80 shadow-[0_10px_30px_rgba(168,85,247,0.15)]"
-                    : "border-white/[0.07] bg-white/[0.02]",
+                    ? "border-violet-core/40 bg-surface/80 shadow-[0_15px_40px_rgba(168,85,247,0.15)]"
+                    : "border-white/[0.06] bg-white/[0.02]",
                 )}
               >
                 <button
@@ -141,8 +166,10 @@ export function DesignPhilosophy() {
                 >
                   <div className="flex items-center gap-3">
                     <span
-                      className="grid h-8 w-8 place-items-center rounded-lg text-white"
-                      style={{ background: `${p.accent}25` }}
+                      className="flex h-9 w-9 items-center justify-center rounded-lg text-white transition-transform duration-300 group-hover:scale-110"
+                      style={{
+                        background: `${p.accent}25`,
+                      }}
                     >
                       <Icon size={16} style={{ color: p.accent }} />
                     </span>
@@ -150,12 +177,14 @@ export function DesignPhilosophy() {
                       <span className="font-mono text-[0.5625rem] tracking-[0.2em] text-ink-muted">
                         {p.index}
                       </span>
-                      <h3 className="text-base font-medium tracking-tight text-ink">
+                      <h3 className="mt-0.5 text-base font-medium tracking-tight text-ink">
                         {p.title}
                       </h3>
                     </div>
                   </div>
-                  <span className="text-xs text-ink-muted">{isExpanded ? "−" : "+"}</span>
+                  <span className="text-xs text-ink-muted transition-transform duration-300">
+                    {isExpanded ? "−" : "+"}
+                  </span>
                 </button>
 
                 {isExpanded && (
