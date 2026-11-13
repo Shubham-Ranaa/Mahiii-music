@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="108" height="108" viewBox="0 0 108 108" fill="none" role="img" aria-label="MAHII">
+  <defs>
+    <radialGradient id="mahii-glow" cx="54" cy="54" r="38" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E040FB" stop-opacity="0.251"/>
+      <stop offset="0.6" stop-color="#7B1FA2" stop-opacity="0.125"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="mahii-left" x1="35" y1="71" x2="41" y2="37" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7B1FA2"/>
+      <stop offset="1" stop-color="#BA68C8"/>
+    </linearGradient>
+    <linearGradient id="mahii-wave" x1="41" y1="52" x2="67" y2="37" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#BA68C8"/>
+      <stop offset="0.5" stop-color="#FF80AB"/>
+      <stop offset="1" stop-color="#FF4081"/>
+    </linearGradient>
+    <linearGradient id="mahii-right" x1="67" y1="71" x2="73" y2="37" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F06292"/>
+      <stop offset="1" stop-color="#FF4081"/>
+    </linearGradient>
+    <linearGradient id="mahii-core" x1="54" y1="68.5" x2="54" y2="53.5" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FF4081"/>
+      <stop offset="1" stop-color="#F48FB1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Deep obsidian backplate -->
+  <circle cx="54" cy="54" r="48" fill="#0B0813"/>
+
+  <!-- Ambient glow inside backplate -->
+  <circle cx="54" cy="54" r="38" fill="url(#mahii-glow)"/>
+
+  <!-- Outer acoustic sound ring -->
+  <path d="M 33 54 A 21 21 0 0 1 75 54" stroke="#F48FB1" stroke-opacity="0.376" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M 75 54 A 21 21 0 0 1 33 54" stroke="#AB47BC" stroke-opacity="0.376" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- Left pillar of the M -->
+  <rect x="35" y="37" width="6" height="34" rx="3" fill="url(#mahii-left)"/>
+
+  <!-- Center frequency wave -->
+  <path d="M 41 40 C 41 38.5 42.5 37.5 43.8 38.3 L 52.2 44.2 C 53.3 45 54.7 45 55.8 44.2 L 64.2 38.3 C 65.5 37.5 67 38.5 67 40 L 67 44 C 67 45.2 66.2 46.2 65.1 46.7 L 55.5 51.2 C 54.5 51.7 53.5 51.7 52.5 51.2 L 42.9 46.7 C 41.8 46.2 41 45.2 41 44 Z" fill="url(#mahii-wave)"/>
+
+  <!-- Right pillar of the M -->
+  <rect x="67" y="37" width="6" height="34" rx="3" fill="url(#mahii-right)"/>
+
+  <!-- Central soundwave resonance point -->
+  <rect x="51.5" y="53.5" width="5" height="15" rx="2.5" fill="url(#mahii-core)"/>
+</svg>

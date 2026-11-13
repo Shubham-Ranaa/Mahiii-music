@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Mail, ChevronDown } from "lucide-react";
 import { InstagramIcon, GithubIcon } from "@/components/ui/BrandIcons";
-import { SOCIALS, CREDITS, CREATORS } from "@/lib/constants";
+import { BrandLogo } from "@/components/ui/BrandLogo";
+import { SOCIALS, CREDITS, CREATORS, APP_VERSION } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export function Footer() {
@@ -15,9 +16,15 @@ export function Footer() {
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
           {/* Brand side */}
           <div>
-            <p className="text-[clamp(2.5rem,8vw,5rem)] font-semibold leading-[0.85] tracking-[-0.055em] text-ink">
-              MAHII
-            </p>
+            <div className="flex items-center gap-4">
+              <BrandLogo
+                size={56}
+                className="h-14 w-14 shrink-0 drop-shadow-[0_0_24px_rgba(168,85,247,0.35)]"
+              />
+              <p className="text-[clamp(2.5rem,8vw,5rem)] font-semibold leading-[0.85] tracking-[-0.055em] text-ink">
+                MAHII
+              </p>
+            </div>
             <p className="mt-4 text-[0.9375rem] font-medium tracking-tight text-lavender/90">
               Music. Memories. Together.
             </p>
@@ -176,7 +183,7 @@ export function Footer() {
             <span className="h-1 w-1 rounded-full bg-white/20" />
             <span className="flex items-center gap-1.5 text-[0.6875rem] text-emerald-400">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              v2.4 Beta
+              v{APP_VERSION}
             </span>
           </div>
 

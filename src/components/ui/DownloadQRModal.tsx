@@ -2,14 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { X, Download, Copy, Check, Smartphone, ShieldCheck } from "lucide-react";
+import { X, Download, Copy, Check, ShieldCheck } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
-import { DOWNLOAD_URL, DOWNLOAD_ATTR, SITE } from "@/lib/constants";
-
-/** MAHII dot mark, embedded in the middle of the QR code. */
-const BRAND_MARK = `data:image/svg+xml;utf8,${encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#101016"/><circle cx="16" cy="16" r="6" fill="#A855F7"/></svg>',
-)}`;
+import { BrandLogo } from "@/components/ui/BrandLogo";
+import { DOWNLOAD_URL, DOWNLOAD_ATTR, SITE, APP_VERSION } from "@/lib/constants";
 
 export function DownloadQRModal({
   isOpen,
@@ -77,14 +73,17 @@ export function DownloadQRModal({
         </button>
 
         <div className="flex items-center gap-3">
-          <span className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-violet-core to-violet-deep text-white shadow-[0_0_20px_rgba(168,85,247,0.5)]">
-            <Smartphone size={20} />
-          </span>
+          <BrandLogo
+            size={40}
+            className="h-10 w-10 shrink-0 drop-shadow-[0_0_18px_rgba(168,85,247,0.55)]"
+          />
           <div>
             <h3 className="text-lg font-semibold tracking-tight text-ink">
               Get MAHII for Android
             </h3>
-            <p className="text-xs text-ink-muted">Version 2.4 Beta · Free &amp; Open</p>
+            <p className="text-xs text-ink-muted">
+              Version {APP_VERSION} · Free &amp; Open
+            </p>
           </div>
         </div>
 
@@ -99,9 +98,9 @@ export function DownloadQRModal({
               bgColor="#FFFFFF"
               fgColor="#0A0A12"
               imageSettings={{
-                src: BRAND_MARK,
-                height: 28,
-                width: 28,
+                src: "/mahii-logo.svg",
+                height: 30,
+                width: 30,
                 excavate: true,
               }}
             />

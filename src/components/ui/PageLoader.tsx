@@ -3,6 +3,8 @@
 import { useRef, useState } from "react";
 import { Sparkles } from "lucide-react";
 import { gsap, useGSAP } from "@/animations/gsap";
+import { BrandLogo } from "@/components/ui/BrandLogo";
+import { APP_VERSION } from "@/lib/constants";
 
 /** Progress ring geometry — the SVG uses a 0 0 100 100 viewBox. */
 const RING_RADIUS = 47;
@@ -107,7 +109,6 @@ export function PageLoader() {
       gsap.set(q("[data-ring-2]"), { opacity: 0, scale: 0.62 });
       gsap.set(q("[data-radar]"), { opacity: 0, scale: 0.7 });
       gsap.set(q("[data-logo-box]"), { opacity: 0, scale: 0.55, rotation: -22 });
-      gsap.set(q("[data-logo-dot]"), { opacity: 0, scale: 0.4 });
       gsap.set(q("[data-ring-svg]"), {
         opacity: 0,
         rotation: -90,
@@ -192,11 +193,6 @@ export function PageLoader() {
             ease: "elastic.out(1, 0.62)",
           },
           0.22,
-        )
-        .to(
-          q("[data-logo-dot]"),
-          { opacity: 1, scale: 1, duration: 0.7, ease: "back.out(2.2)" },
-          0.36,
         )
         .to(q("[data-ring-svg]"), { opacity: 1, duration: 0.9 }, 0.3)
         .to(q("[data-spark]"), { opacity: 1, duration: 0.6 }, 0.45);
@@ -608,14 +604,15 @@ export function PageLoader() {
             <div className="h-full w-full rounded-2xl border border-lavender/30 animate-ping-slow" />
           </div>
 
-          {/* Core box */}
+          {/* Core emblem */}
           <div
             data-logo-box
-            className="loader-hidden relative grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-violet-core via-violet-deep to-[#4c1d95] shadow-[0_0_60px_rgba(168,85,247,0.8)] ring-1 ring-white/30 will-change-transform"
+            className="loader-hidden relative h-20 w-20 will-change-transform"
           >
-            <span
-              data-logo-dot
-              className="relative h-4 w-4 rounded-full bg-void shadow-inner ring-1 ring-white/40"
+            <BrandLogo
+              size={80}
+              priority
+              className="h-full w-full drop-shadow-[0_0_45px_rgba(168,85,247,0.75)]"
             />
           </div>
         </div>
@@ -691,7 +688,7 @@ export function PageLoader() {
           className="loader-hidden absolute bottom-6 flex items-center gap-2 text-[0.6875rem] text-ink-muted"
         >
           <Sparkles size={12} className="text-violet-core" />
-          <span>Crafted by Harsh &amp; Shubham · v2.4 Beta</span>
+          <span>Crafted by Harsh &amp; Shubham · v{APP_VERSION}</span>
         </div>
       </div>
     </div>

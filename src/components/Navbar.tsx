@@ -5,6 +5,7 @@ import { Menu, X, ArrowUpRight, QrCode } from "lucide-react";
 import { NAV_LINKS, DOWNLOAD_URL, DOWNLOAD_ATTR, IS_EXTERNAL_DOWNLOAD, CREATORS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { ButtonLink } from "@/components/ui/Button";
+import { BrandLogo } from "@/components/ui/BrandLogo";
 import { DownloadQRModal } from "@/components/ui/DownloadQRModal";
 import { MobileActionBar } from "@/components/ui/MobileActionBar";
 import { SOCIAL_ICONS } from "@/components/ui/BrandIcons";
@@ -97,10 +98,11 @@ export function Navbar() {
             className="group flex items-center gap-2.5 shrink-0 transition-transform duration-300 hover:scale-[1.02]"
             aria-label="MAHII home"
           >
-            <div className="relative grid h-7 w-7 place-items-center transition-transform duration-500 group-hover:rotate-[12deg] group-hover:scale-110">
-              <span className="absolute inset-0 rounded-[10px] bg-gradient-to-br from-violet-core via-violet-bright to-violet-deep opacity-85 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(168,85,247,0.6)]" />
-              <span className="relative h-[6px] w-[6px] rounded-full bg-void ring-1 ring-white/10" />
-            </div>
+            <BrandLogo
+              size={32}
+              priority
+              className="h-8 w-8 shrink-0 drop-shadow-[0_0_12px_rgba(168,85,247,0.35)] transition-transform duration-500 group-hover:rotate-[12deg] group-hover:scale-110"
+            />
             <div>
               <span className="text-[0.9375rem] font-semibold tracking-[0.2em] text-ink leading-tight">
                 MAHII
@@ -210,10 +212,7 @@ export function Navbar() {
           {/* Header */}
           <div className="flex h-[var(--nav-h)] shrink-0 items-center justify-between border-b border-white/[0.05] bg-void/80 backdrop-blur-xl px-5">
             <div className="flex items-center gap-2.5">
-              <div className="relative grid h-7 w-7 place-items-center">
-                <span className="absolute inset-0 rounded-[9px] bg-gradient-to-br from-violet-core via-violet-bright to-violet-deep" />
-                <span className="relative h-[5px] w-[5px] rounded-full bg-void ring-1 ring-white/10" />
-              </div>
+              <BrandLogo size={30} className="h-[30px] w-[30px] shrink-0" />
               <span className="text-[0.9375rem] font-semibold tracking-[0.2em] text-ink">
                 MAHII
               </span>

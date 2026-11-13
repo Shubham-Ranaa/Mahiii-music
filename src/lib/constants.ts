@@ -13,11 +13,14 @@ export const SITE = {
   url: "https://mahii.app",
 } as const;
 
+/** Current Android release, shown across the site and used by the loader. */
+export const APP_VERSION = "1.4.6";
+
 /**
  * The APK shipped inside `public/`. Every download CTA points straight at it
  * so pressing a button downloads the app instead of jumping to a section.
  */
-export const DOWNLOAD_FILE_NAME = "mahii-latest.apk";
+export const DOWNLOAD_FILE_NAME = `MAHII-${APP_VERSION}-release.apk`;
 
 /**
  * Set NEXT_PUBLIC_MAHII_DOWNLOAD_URL to a Play Store / CDN / release link to

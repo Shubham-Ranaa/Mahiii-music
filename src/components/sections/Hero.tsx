@@ -9,7 +9,7 @@ import { AudioWaveform } from "@/components/ui/AudioWaveform";
 import { InteractiveNowPlaying, DEMO_TRACKS, type Track } from "@/components/ui/InteractiveNowPlaying";
 import { DownloadQRModal } from "@/components/ui/DownloadQRModal";
 import { useHeroAnimation, useMouseParallax } from "@/animations/heroAnimations";
-import { DOWNLOAD_URL, DOWNLOAD_ATTR } from "@/lib/constants";
+import { DOWNLOAD_URL, DOWNLOAD_ATTR, APP_VERSION } from "@/lib/constants";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 
@@ -160,7 +160,7 @@ export function Hero() {
                 <span className="absolute inline-flex h-full w-full rounded-full bg-violet-core opacity-70 animate-ping-slow" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-core" />
               </span>
-              Android Music Experience · v2.4 Beta
+              Android Music Experience · v{APP_VERSION}
             </span>
           </div>
 

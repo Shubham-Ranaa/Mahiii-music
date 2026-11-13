@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "headers": [
     {
-      "source": "/mahii-latest.apk",
+      "source": "/MAHII-1.4.6-release.apk",
       "headers": [
         {
           "key": "Content-Type",
