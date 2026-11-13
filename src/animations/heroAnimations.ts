@@ -41,70 +41,196 @@ export function useHeroAnimation() {
         // hover states and CSS transitions behave normally afterwards.
         onComplete: () => {
           gsap.set(targets, { clearProps: "transform,opacity" });
+          gsap.set(q("[data-hero-letter], [data-hero-word]"), {
+            clearProps: "transform,opacity,filter",
+          });
+          gsap.set(q("[data-hero-reveal]"), {
+            clearProps: "transform,opacity,clipPath",
+          });
         },
       });
 
+      /* ---------------- Ambient light field ---------------- */
       tl.fromTo(
         q("[data-hero-glow]"),
-        { opacity: 0, scale: 0.85 },
-        { opacity: 1, scale: 1, duration: 1.8 },
-      )
-        .fromTo(
-          q("[data-hero-wordmark]"),
-          { yPercent: 110, opacity: 0 },
-          { yPercent: 0, opacity: 1, duration: 1.25 },
-          0.1,
-        )
-        .fromTo(
-          q("[data-hero-line]"),
-          { yPercent: 108 },
-          { yPercent: 0, duration: 1.15, stagger: 0.09 },
-          0.25,
-        )
-        .fromTo(
-          q("[data-hero-fade]"),
-          { opacity: 0, y: 22 },
-          { opacity: 1, y: 0, duration: 1, stagger: 0.1 },
-          0.6,
-        )
-        .fromTo(
-          q("[data-hero-phone]"),
-          { opacity: 0, y: 80, scale: 0.9, rotate: -4 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            rotate: 0,
-            duration: 1.6,
-            ease: "back.out(1.25)",
-          },
-          0.35,
-        )
-        .fromTo(
-          q("[data-hero-hint]"),
-          { opacity: 0, y: -14, scale: 0.92 },
-          { opacity: 1, y: 0, scale: 1, duration: 0.9 },
-          0.55,
-        )
-        .fromTo(
-          q("[data-hero-art]"),
-          { opacity: 0, scale: 0.5, y: 40 },
-          {
-            opacity: 1,
-            scale: 1,
-            y: 0,
-            duration: 1.25,
-            stagger: { each: 0.12, from: "random" },
-            ease: "back.out(1.6)",
-          },
-          0.65,
-        )
-        .fromTo(
-          q("[data-hero-scroll]"),
-          { opacity: 0, y: 12 },
-          { opacity: 1, y: 0, duration: 0.8 },
-          1.2,
-        );
+        { opacity: 0, scale: 0.86 },
+        { opacity: 1, scale: 1, duration: 2.4, ease: "expo.out" },
+      );
+
+      /* ---------------- Status badge ---------------- */
+      tl.fromTo(
+        q("[data-hero-wordmark]"),
+        { opacity: 0, scale: 0.7, y: -20, rotate: -5 },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          rotate: 0,
+          duration: 1.2,
+          ease: "back.out(1.8)",
+        },
+        0.05,
+      );
+
+      /* ---------------- Wordmark: per-letter flip up ---------------- */
+      tl.fromTo(
+        q("[data-hero-letter]"),
+        {
+          yPercent: 130,
+          opacity: 0,
+          rotateX: -92,
+          scale: 0.78,
+        },
+        {
+          yPercent: 0,
+          opacity: 1,
+          rotateX: 0,
+          scale: 1,
+          duration: 1.35,
+          stagger: 0.085,
+          ease: "expo.out",
+        },
+        0.18,
+      );
+
+      /* ---------------- Highlight sweeping across the letters --------- */
+      tl.fromTo(
+        q("[data-hero-letter]"),
+        { backgroundPosition: "100% 0%" },
+        {
+          backgroundPosition: "0% 0%",
+          duration: 1.5,
+          stagger: 0.1,
+          ease: "power2.inOut",
+        },
+        0.55,
+      );
+
+      /* ---------------- Tagline: word-by-word reveal ---------------- */
+      tl.fromTo(
+        q("[data-hero-word]"),
+        {
+          yPercent: 120,
+          opacity: 0,
+          rotateX: -70,
+        },
+        {
+          yPercent: 0,
+          opacity: 1,
+          rotateX: 0,
+          duration: 1.2,
+          stagger: 0.075,
+          ease: "expo.out",
+        },
+        0.5,
+      );
+
+      /* ---------------- Supporting copy: masked line reveals ---------- */
+      tl.fromTo(
+        q("[data-hero-reveal]"),
+        {
+          opacity: 0,
+          y: 30,
+          clipPath: "inset(0% 0% 100% 0%)",
+        },
+        {
+          opacity: 1,
+          y: 0,
+          clipPath: "inset(0% 0% 0% 0%)",
+          duration: 1.15,
+          stagger: 0.12,
+          ease: "expo.out",
+        },
+        0.75,
+      );
+
+      /* ---------------- CTAs: spring in ---------------- */
+      tl.fromTo(
+        q("[data-hero-cta]"),
+        { opacity: 0, y: 38, scale: 0.82, rotate: -2.5 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          rotate: 0,
+          duration: 1.15,
+          stagger: 0.09,
+          ease: "back.out(2)",
+        },
+        0.92,
+      );
+
+      /* ---------------- Chips ---------------- */
+      tl.fromTo(
+        q("[data-hero-chips]"),
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.95, ease: "power3.out" },
+        1.18,
+      );
+
+      /* ---------------- Device: 3D tumble into place ---------------- */
+      tl.fromTo(
+        q("[data-hero-device]"),
+        {
+          opacity: 0,
+          y: 120,
+          scale: 0.78,
+          rotateX: 32,
+          rotateY: -18,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          rotateX: 0,
+          rotateY: 0,
+          duration: 2,
+          ease: "expo.out",
+        },
+        0.35,
+      );
+
+      /* ---------------- Floating artwork ---------------- */
+      tl.fromTo(
+        q("[data-hero-art-inner]"),
+        {
+          opacity: 0,
+          scale: 0.35,
+          y: 70,
+          rotate: -18,
+          filter: "blur(12px)",
+        },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          rotate: 0,
+          filter: "blur(0px)",
+          duration: 1.5,
+          stagger: { each: 0.13, from: "random" },
+          ease: "back.out(1.6)",
+        },
+        0.85,
+      );
+
+      /* ---------------- Hint pill + scroll cue ---------------- */
+      tl.fromTo(
+        q("[data-hero-hint]"),
+        { opacity: 0, y: -20, scale: 0.86 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.95,
+          ease: "back.out(1.7)",
+        },
+        1.05,
+      ).fromTo(
+        q("[data-hero-scroll]"),
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" },
+        1.35,
+      );
 
       const triggerHero = () => {
         if (tl && tl.progress() === 0) {

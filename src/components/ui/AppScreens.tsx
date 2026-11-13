@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { AlbumArtwork } from "./AlbumArtwork";
-import { Heart, Play, Pause, Plus } from "lucide-react";
+import { Heart, Play, Pause, Plus, Link2, ListMusic, Check } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
 /* Shared bits                                                         */
@@ -40,6 +40,28 @@ function MiniBars({ count = 12 }: { count?: number }) {
         />
       ))}
     </div>
+  );
+}
+
+/** The green Spotify mark. */
+function SpotifyGlyph({
+  size = 16,
+  className,
+}: {
+  size?: number;
+  className?: string;
+}) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden
+    >
+      <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.52 17.28c-.24.36-.66.48-1.02.24-2.82-1.74-6.36-2.1-10.56-1.14-.42.12-.84-.18-.96-.6-.12-.42.18-.84.6-.96 4.56-1.02 8.52-.6 11.64 1.26.36.24.48.66.3 1.2zm1.44-3.3c-.3.42-.84.6-1.26.3-3.24-1.98-8.16-2.58-11.94-1.38-.48.12-1.02-.12-1.14-.6-.12-.48.12-1.02.6-1.14 4.32-1.32 9.84-.66 13.5 1.62.42.24.54.78.24 1.2zm.12-3.36C15.24 8.36 8.82 8.22 5.1 9.3c-.54.18-1.08-.12-1.26-.66-.18-.54.12-1.08.66-1.26 4.26-1.2 11.34-1.02 15.78 1.32.48.3.6.9.3 1.38-.3.42-.9.6-1.38.3z" />
+    </svg>
   );
 }
 
@@ -480,6 +502,124 @@ export function RoomScreen() {
             <span>Add song</span>
           </button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+export function SpotifyScreen() {
+  const [connected, setConnected] = useState(true);
+  const [active, setActive] = useState(0);
+
+  const playlists = [
+    { title: "Chill Mix", meta: "62 tracks", tone: "tide" as const },
+    { title: "Night Drive", meta: "41 tracks", tone: "dusk" as const },
+    { title: "Focus / Deep Work", meta: "88 tracks", tone: "moss" as const },
+    { title: "Liked Songs", meta: "412 tracks", tone: "rose" as const },
+  ];
+
+  return (
+    <div className="flex h-full flex-col bg-gradient-to-b from-[#0d1a12] via-[#0a0f0c] to-[#08080c] select-none">
+      <StatusBar />
+      <div className="flex items-center justify-between px-4 pt-3">
+        <div>
+          <p className="text-[0.5625rem] uppercase tracking-[0.2em] text-white/40">
+            Integrations
+          </p>
+          <p className="mt-1 text-[1.0625rem] font-semibold tracking-tight text-white">
+            Spotify
+          </p>
+        </div>
+        <SpotifyGlyph size={18} className="text-[#1DB954]" />
+      </div>
+
+      <div className="mx-4 mt-4 rounded-2xl border border-white/[0.07] bg-gradient-to-br from-[#1DB954]/15 via-transparent to-transparent p-3.5">
+        <div className="flex items-center gap-3">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#1DB954] text-black shadow-[0_0_24px_rgba(29,185,84,0.45)]">
+            <SpotifyGlyph size={19} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[0.8125rem] font-semibold text-white">
+              {connected ? "Spotify connected" : "Connect your account"}
+            </p>
+            <p className="truncate text-[0.625rem] text-white/40">
+              {connected
+                ? "shubham.rana · Premium"
+                : "Sync playlists, likes and history"}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setConnected(!connected)}
+            className={cn(
+              "shrink-0 rounded-full px-3 py-1.5 text-[0.5625rem] font-semibold transition-all active:scale-95",
+              connected
+                ? "bg-white/[0.08] text-white/70 hover:bg-white/[0.12]"
+                : "bg-[#1DB954] text-black hover:bg-[#1ed760]",
+            )}
+          >
+            {connected ? "Disconnect" : "Connect"}
+          </button>
+        </div>
+
+        {connected && (
+          <div className="mt-3 flex items-center gap-2 rounded-xl bg-black/30 px-3 py-2">
+            <Link2 size={11} className="shrink-0 text-[#1DB954]" />
+            <span className="truncate text-[0.5625rem] text-white/50">
+              Your playlists are now available in MAHII
+            </span>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-5 flex items-center justify-between px-4">
+        <p className="text-[0.5625rem] uppercase tracking-[0.2em] text-white/40">
+          Your playlists
+        </p>
+        <ListMusic size={12} className="text-white/25" />
+      </div>
+
+      <div className="mt-3 flex-1 space-y-2 px-4">
+        {playlists.map((p, i) => (
+          <button
+            key={p.title}
+            type="button"
+            onClick={() => setActive(i)}
+            className={cn(
+              "flex w-full items-center gap-3 rounded-xl p-1.5 text-left transition-colors",
+              active === i ? "bg-[#1DB954]/12" : "hover:bg-white/[0.03]",
+            )}
+          >
+            <AlbumArtwork
+              tone={p.tone}
+              title=""
+              variant={i}
+              rounded="rounded-lg"
+              className="h-10 w-10 shrink-0"
+            />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[0.75rem] font-medium text-white/90">
+                {p.title}
+              </p>
+              <p className="truncate text-[0.5625rem] text-white/35">
+                {p.meta} · Spotify
+              </p>
+            </div>
+            {active === i ? (
+              <span className="grid h-7 w-7 place-items-center rounded-full bg-[#1DB954] text-black">
+                <Check size={12} strokeWidth={3} />
+              </span>
+            ) : (
+              <span className="grid h-7 w-7 place-items-center rounded-full bg-white/[0.07] text-white/50">
+                <Play size={11} className="translate-x-0.5 fill-current" />
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      <div className="border-t border-white/6 px-4 py-3 text-center text-[0.5625rem] text-white/35">
+        Play your Spotify library with MAHII — even offline
       </div>
     </div>
   );

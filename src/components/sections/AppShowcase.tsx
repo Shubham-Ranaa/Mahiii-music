@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Music, AlignLeft, Sliders, Disc, Users, Sparkles } from "lucide-react";
+import { Music, AlignLeft, Sliders, Disc, Users, Sparkles, Link2 } from "lucide-react";
 import { gsap, useGSAP } from "@/animations/gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { SHOWCASE_SCREENS } from "@/lib/constants";
@@ -13,6 +13,7 @@ import {
   EqualizerScreen,
   LibraryScreen,
   RoomScreen,
+  SpotifyScreen,
 } from "@/components/ui/AppScreens";
 
 const SCREEN_MAP: Record<string, () => React.JSX.Element> = {
@@ -21,6 +22,7 @@ const SCREEN_MAP: Record<string, () => React.JSX.Element> = {
   equalizer: EqualizerScreen,
   library: LibraryScreen,
   room: RoomScreen,
+  spotify: SpotifyScreen,
 };
 
 const SCREEN_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
@@ -29,6 +31,7 @@ const SCREEN_ICONS: Record<string, React.ComponentType<{ size?: number; classNam
   equalizer: Sliders,
   library: Disc,
   room: Users,
+  spotify: Link2,
 };
 
 export function AppShowcase() {
@@ -129,7 +132,9 @@ export function AppShowcase() {
                 ? "radial-gradient(60% 50% at 50% 40%, rgba(34,211,238,0.14) 0%, transparent 70%)"
                 : activeId === "lyrics"
                   ? "radial-gradient(60% 50% at 50% 40%, rgba(244,114,182,0.12) 0%, transparent 70%)"
-                  : "radial-gradient(60% 50% at 50% 40%, rgba(124,58,237,0.18) 0%, transparent 70%)",
+                  : activeId === "spotify"
+                    ? "radial-gradient(60% 50% at 50% 40%, rgba(29,185,84,0.16) 0%, transparent 70%)"
+                    : "radial-gradient(60% 50% at 50% 40%, rgba(124,58,237,0.18) 0%, transparent 70%)",
         }}
       />
 
@@ -174,9 +179,9 @@ export function AppShowcase() {
               Designed for music lovers.
             </h2>
             <p data-show-copy className="type-lede mb-8 max-w-[42ch]">
-              Five refined surfaces that cover how you listen — from full-bleed
-              album art to real-time synchronized listening rooms with everyone on
-              the same beat.
+              Six refined surfaces that cover how you listen — from full-bleed
+              album art to real-time synchronized listening rooms, and a Spotify
+              connection that brings your own playlists along.
             </p>
 
             {/* Desktop tabs */}
@@ -230,7 +235,9 @@ export function AppShowcase() {
                         isActive ? "text-violet-core opacity-100" : "opacity-0",
                       )}
                     >
-                      {screen.id === "room" ? "CONNECTED" : "ACTIVE"}
+                      {screen.id === "room" || screen.id === "spotify"
+                        ? "CONNECTED"
+                        : "ACTIVE"}
                     </span>
                   </button>
                 );

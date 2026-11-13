@@ -68,8 +68,9 @@ export function Features() {
             <span className="text-ink-soft">One music experience.</span>
           </h2>
           <p className="type-lede max-w-[42ch] lg:max-w-[38ch] lg:pb-0">
-            Seven pieces of the app that work as one system — discovery,
-            listening, sound and the library that ties it together.
+            Eight pieces of the app that work as one system — discovery, your
+            Spotify library, listening, sound and the collections that tie it
+            together.
           </p>
         </div>
 
@@ -209,7 +210,7 @@ export function Features() {
             {/* Counter and navigation */}
             <div className="flex items-center gap-3">
               <span className="font-mono text-[0.625rem] tracking-[0.16em] text-ink-muted">
-                {active.index} / 07
+                {active.index} / {String(FEATURES.length).padStart(2, "0")}
               </span>
               <div className="flex items-center gap-1">
                 <button

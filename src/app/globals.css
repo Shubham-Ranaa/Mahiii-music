@@ -248,6 +248,36 @@
     color: transparent;
   }
 
+  /* Wordmark letters.
+     The gradient has to live on the letter itself: Chromium mis-clips a
+     text-clipped background that is painted on an ancestor whose text sits
+     in nested inline-block children. GSAP sweeps the background position so
+     a highlight travels across the word. */
+  .hero-letter {
+    background-image: linear-gradient(
+      100deg,
+      #e2d4f0 0%,
+      #a855f7 36%,
+      #7c3aed 52%,
+      #ffffff 61%,
+      #a855f7 70%,
+      #7c3aed 100%
+    );
+    background-size: 260% 100%;
+    background-position: 100% 0%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Safety net: if the browser cannot clip the background to the text the
+     letters would be invisible, so fall back to a solid colour. */
+  @supports not ((background-clip: text) or (-webkit-background-clip: text)) {
+    .hero-letter {
+      color: var(--color-lavender);
+    }
+  }
+
   .text-gradient-warm {
     background: linear-gradient(
       100deg,
@@ -416,6 +446,29 @@
     animation: shimmer-sweep 3s ease-in-out infinite;
   }
 
+  /* Loading screen ambience */
+  .loader-aurora {
+    animation: loader-aurora 24s linear infinite;
+  }
+
+  .loader-particle {
+    animation: loader-particle 7s cubic-bezier(0.33, 0, 0.67, 1) infinite;
+  }
+
+  .loader-orbit {
+    animation: loader-orbit 13s linear infinite;
+  }
+
+  .loader-sheen {
+    animation: loader-sheen 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  /* Elements that belong to the loader start invisible on the very first
+     paint (before GSAP takes over), so nothing pops in or out of existence. */
+  .loader-hidden {
+    opacity: 0;
+  }
+
   /* Smooth hover lift */
   .hover-lift {
     transition: transform 0.35s var(--ease-out-expo),
@@ -573,6 +626,60 @@
   100% {
     transform: translateX(200%);
   }
+}
+
+/* =============== Loader ambience =============== */
+@keyframes loader-aurora {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loader-particle {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.5);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate3d(16px, -150px, 0) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes loader-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loader-sheen {
+  0% {
+    transform: translateX(-140%);
+  }
+  100% {
+    transform: translateX(340%);
+  }
+}
+
+/* Screen swap inside the feature mockup */
+@keyframes screen-swap {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0px);
+  }
+}
+
+.screen-swap {
+  animation: screen-swap 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* Gradient border hover effect */

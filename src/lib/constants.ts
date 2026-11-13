@@ -179,6 +179,14 @@ export const FEATURES: Feature[] = [
       "Enjoy a customizable interface with beautiful themes and modern visual elements.",
     mockLabel: "Appearance",
   },
+  {
+    id: "spotify",
+    index: "08",
+    title: "Connect Your Spotify",
+    description:
+      "Connect your Spotify account and pull your playlists straight into MAHII. Everything you love, ready to play — even offline.",
+    mockLabel: "Spotify",
+  },
 ];
 
 export type ShowcaseScreen = {
@@ -218,6 +226,13 @@ export const SHOWCASE_SCREENS: ShowcaseScreen[] = [
     label: "Listening Room",
     title: "Listening Room",
     caption: "A shared queue with everyone synced to the same second.",
+  },
+  {
+    id: "spotify",
+    label: "Spotify",
+    title: "Spotify Connect",
+    caption:
+      "Link your Spotify account and bring your playlists, likes and history straight into MAHII.",
   },
 ];
 

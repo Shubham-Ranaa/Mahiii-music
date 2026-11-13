@@ -165,49 +165,77 @@ export function Hero() {
           </div>
 
           {/* Main headline - larger and more dramatic */}
-          <h1 className="type-display mb-5">
+          <h1 className="type-display mb-5" style={{ perspective: 900 }}>
             <span className="mask-line">
-              <span data-hero-line className="text-gradient-violet">
-                MAHII
+              <span data-hero-line>
+                {"MAHII".split("").map((char, i) => (
+                  <span
+                    key={`${char}-${i}`}
+                    data-hero-letter
+                    className="hero-letter inline-block will-change-transform"
+                  >
+                    {char}
+                  </span>
+                ))}
               </span>
             </span>
           </h1>
 
           {/* Tagline */}
-          <p className="type-hero mb-5 max-w-[22ch]">
+          <p className="type-hero mb-5 max-w-[22ch]" style={{ perspective: 700 }}>
             <span className="mask-line">
-              <span data-hero-line>Music. Memories.</span>
+              <span data-hero-line>
+                {"Music. Memories.".split(" ").map((word, i) => (
+                  <span key={`${word}-${i}`}>
+                    <span
+                      data-hero-word
+                      className="inline-block will-change-transform"
+                    >
+                      {word}
+                    </span>
+                    {"\u00A0"}
+                  </span>
+                ))}
+              </span>
             </span>
             <span className="mask-line">
               <span data-hero-line className="text-gradient-violet">
-                Together.
+                {"Together.".split(" ").map((word, i) => (
+                  <span key={`${word}-${i}`}>
+                    <span
+                      data-hero-word
+                      className="inline-block will-change-transform"
+                    >
+                      {word}
+                    </span>
+                    {"\u00A0"}
+                  </span>
+                ))}
               </span>
             </span>
           </p>
 
           {/* Sub-tagline */}
           <p
-            data-hero-fade
+            data-hero-reveal
             className="mb-3 text-[1.0625rem] font-medium tracking-tight text-lavender/90"
           >
             Your music. Your moments. Your people.
           </p>
 
           {/* Description */}
-          <p data-hero-fade className="type-lede mb-8 max-w-[44ch]">
+          <p data-hero-reveal className="type-lede mb-8 max-w-[44ch]">
             Discover music, enjoy synchronized lyrics, customize your equalizer
             curve and host shared listening rooms with friends across the globe.
           </p>
 
           {/* Action CTAs - more premium layout */}
-          <div
-            data-hero-fade
-            className="flex flex-wrap items-center gap-3 sm:gap-4"
-          >
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
             <ButtonLink
               href={DOWNLOAD_URL}
               download={DOWNLOAD_ATTR}
               size="lg"
+              data-hero-cta
               className="relative overflow-hidden rounded-full bg-gradient-to-r from-violet-core to-violet-deep px-8 py-3.5 text-base font-medium text-white shadow-[0_0_30px_rgba(168,85,247,0.4)] transition-all duration-300 hover:shadow-[0_0_45px_rgba(168,85,247,0.6)] hover:scale-[1.03] active:scale-[0.98] group"
             >
               <span className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -218,20 +246,27 @@ export function Hero() {
             <button
               type="button"
               onClick={() => setQrOpen(true)}
+              data-hero-cta
               className="hidden sm:inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-3 text-sm font-medium text-ink transition-all duration-300 hover:border-violet-core/50 hover:bg-white/[0.05] hover:shadow-[0_0_25px_rgba(168,85,247,0.25)] active:scale-[0.98]"
             >
               <QrCode size={15} className="text-lavender" />
               Scan QR
             </button>
 
-            <ButtonLink href="#features" variant="outline" size="lg" className="rounded-full">
+            <ButtonLink
+              href="#features"
+              variant="outline"
+              size="lg"
+              data-hero-cta
+              className="rounded-full"
+            >
               Explore Features
               <ArrowUpRight size={15} strokeWidth={2} />
             </ButtonLink>
           </div>
 
           {/* Feature chips */}
-          <div data-hero-fade className="mt-6 flex items-center gap-4 text-[0.75rem] text-ink-muted">
+          <div data-hero-chips className="mt-6 flex items-center gap-4 text-[0.75rem] text-ink-muted">
             <span className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
               Free personal build
@@ -264,68 +299,74 @@ export function Hero() {
             onPointerEnter={() => setPointerInside(true)}
             onPointerLeave={() => setPointerInside(false)}
           >
-            {/* Glow behind phone */}
-            <div
-              className="absolute -inset-10 rounded-full opacity-60 blur-3xl"
-              style={{
-                background:
-                  "radial-gradient(50% 50% at 50% 50%, rgba(168,85,247,0.35) 0%, rgba(124,58,237,0.12) 50%, transparent 70%)",
-                animation: "drift-glow 16s ease-in-out infinite",
-              }}
-            />
-
-            <PhoneMockup
-              width={280}
-              className="animate-float-soft mx-auto"
-              label="MAHII Player"
-            >
-              <InteractiveNowPlaying
-                key={activeTrackIndex}
-                initialTrackIndex={activeTrackIndex}
-                onTrackChange={(t) => {
-                  const idx = DEMO_TRACKS.findIndex((x) => x.id === t.id);
-                  if (idx !== -1) setActiveTrackIndex(idx);
+            {/* The entrance lives on an inner wrapper so it never fights the
+                mouse-parallax transform written to this element. */}
+            <div data-hero-device className="relative">
+              {/* Glow behind phone */}
+              <div
+                className="absolute -inset-10 rounded-full opacity-60 blur-3xl"
+                style={{
+                  background:
+                    "radial-gradient(50% 50% at 50% 50%, rgba(168,85,247,0.35) 0%, rgba(124,58,237,0.12) 50%, transparent 70%)",
+                  animation: "drift-glow 16s ease-in-out infinite",
                 }}
               />
-            </PhoneMockup>
 
-            {/* Floating artwork - more interactive */}
-            {FLOATING_ART.map((art) => (
-              <button
-                key={art.title}
-                type="button"
-                onClick={() => setActiveTrackIndex(art.trackIndex)}
-                title={`Play ${art.title} in demo phone`}
-                data-hero-art
-                data-parallax={String(art.depth)}
-                className={cn(
-                  "group absolute",
-                  art.className,
-                  art.size,
-                  "hidden lg:block cursor-pointer"
-                )}
-                style={{
-                  animation: `float-soft ${7 + art.depth}s ease-in-out ${art.delay} infinite`,
-                }}
+              <PhoneMockup
+                width={280}
+                className="animate-float-soft mx-auto"
+                label="MAHII Player"
               >
-                <AlbumArtwork
-                  tone={art.tone}
-                  title={art.title}
-                  variant={art.variant}
-                  rounded="rounded-xl"
-                  className={cn(
-                    "aspect-square w-full shadow-[0_20px_50px_-15px_rgba(0,0,0,0.9)] transition-all duration-300",
-                    "group-hover:shadow-[0_0_35px_rgba(168,85,247,0.7)]",
-                    "group-hover:ring-2 group-hover:ring-violet-core",
-                    "group-hover:scale-105",
-                  )}
+                <InteractiveNowPlaying
+                  key={activeTrackIndex}
+                  initialTrackIndex={activeTrackIndex}
+                  onTrackChange={(t) => {
+                    const idx = DEMO_TRACKS.findIndex((x) => x.id === t.id);
+                    if (idx !== -1) setActiveTrackIndex(idx);
+                  }}
                 />
-                {/* Hover label */}
-                <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[0.5625rem] font-mono tracking-wider text-lavender whitespace-nowrap bg-void/80 px-2 py-0.5 rounded-full border border-white/10">
-                  ▶ Tap to play
-                </span>
-              </button>
-            ))}
+              </PhoneMockup>
+
+              {/* Floating artwork - more interactive */}
+              {FLOATING_ART.map((art) => (
+                <button
+                  key={art.title}
+                  type="button"
+                  onClick={() => setActiveTrackIndex(art.trackIndex)}
+                  title={`Play ${art.title} in demo phone`}
+                  data-hero-art
+                  data-parallax={String(art.depth)}
+                  className={cn(
+                    "group absolute",
+                    art.className,
+                    art.size,
+                    "hidden lg:block cursor-pointer"
+                  )}
+                  style={{
+                    animation: `float-soft ${7 + art.depth}s ease-in-out ${art.delay} infinite`,
+                  }}
+                >
+                  <span data-hero-art-inner className="block will-change-transform">
+                    <AlbumArtwork
+                      tone={art.tone}
+                      title={art.title}
+                      variant={art.variant}
+                      rounded="rounded-xl"
+                      className={cn(
+                        "aspect-square w-full shadow-[0_20px_50px_-15px_rgba(0,0,0,0.9)] transition-all duration-300",
+                        "group-hover:shadow-[0_0_35px_rgba(168,85,247,0.7)]",
+                        "group-hover:ring-2 group-hover:ring-violet-core",
+                        "group-hover:scale-105",
+                      )}
+                    />
+                  </span>
+                  {/* Hover label */}
+                  <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[0.5625rem] font-mono tracking-wider text-lavender whitespace-nowrap bg-void/80 px-2 py-0.5 rounded-full border border-white/10">
+                    ▶ Tap to play
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Mobile track selector - refined */}
