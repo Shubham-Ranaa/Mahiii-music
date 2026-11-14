@@ -16,20 +16,20 @@ export const SITE = {
 export const APP_VERSION = "1.4.6";
 
 /**
- * The APK shipped inside `public/`. Every download CTA points straight at it
- * so pressing a button downloads the app instead of jumping to a section.
+ * The APK shipped as a public GitHub Release asset. Kept for the `download`
+ * attribute — ignored by browsers for cross-origin links, so the name the
+ * file actually arrives under is decided by the server.
  */
-export const DOWNLOAD_FILE_NAME = `MAHII-${APP_VERSION}-release.apk`;
+export const DOWNLOAD_FILE_NAME = "MAHII.apk";
 
 /**
- * Public GitHub Release asset that hosts the APK. The APK is 149 MB,
- * larger than GitHub's 100 MB file limit, so it is published as an asset
- * on the public `mahii-releases` repo instead of living inside `public/`.
- * Anything that needs a stable URL (download buttons, the QR code) should
- * use this instead of the local copy.
+ * Public GitHub Release asset that hosts the APK. The APK is published as a
+ * release asset on the public `mahii-releases` repo instead of living inside
+ * `public/`. Anything that needs a stable URL (download buttons, the QR
+ * code) uses this instead of a local copy.
  */
 export const RELEASE_APK_URL =
-  "https://github.com/Shubham-Ranaa/mahii-releases/releases/download/v1.4.6/MAHII-1.4.6-release.apk";
+  "https://github.com/Shubham-Ranaa/mahii-releases/releases/download/v1.4.6/MAHII.apk";
 
 /**
  * Public GitHub Release asset that hosts the APK. NEXT_PUBLIC_MAHII_DOWNLOAD_URL
