@@ -91,17 +91,20 @@ export function useWordScrollReveal<T extends HTMLElement = HTMLElement>() {
         return;
       }
 
+      // The dim floor stays high enough to keep every word readable while
+      // the statement is still "off" — a low floor made half the sentence
+      // look broken/unfinished on first paint.
       gsap.fromTo(
         words,
-        { opacity: 0.16 },
+        { opacity: 0.55 },
         {
           opacity: 1,
           stagger: 0.4,
           ease: "none",
           scrollTrigger: {
             trigger: scope.current,
-            start: "top 72%",
-            end: "bottom 62%",
+            start: "top 88%",
+            end: "top 42%",
             scrub: 0.6,
           },
         },
