@@ -1,8 +1,7 @@
 /**
  * Central content + configuration for the MAHII site.
- * Download URL is intentionally configurable: it points at the bundled APK in
- * `public/` by default and can be overridden with an env var (Play Store,
- * a CDN, a release asset, ...).
+ * Download URL is configurable: it points at the public GitHub Release
+ * asset by default and can be overridden with an env var.
  */
 
 export const SITE = {
@@ -23,11 +22,22 @@ export const APP_VERSION = "1.4.6";
 export const DOWNLOAD_FILE_NAME = `MAHII-${APP_VERSION}-release.apk`;
 
 /**
- * Set NEXT_PUBLIC_MAHII_DOWNLOAD_URL to a Play Store / CDN / release link to
- * override the bundled APK. Defaults to the local APK in `public/`.
+ * Public GitHub Release asset that hosts the APK. The APK is 149 MB,
+ * larger than GitHub's 100 MB file limit, so it is published as an asset
+ * on the public `mahii-releases` repo instead of living inside `public/`.
+ * Anything that needs a stable URL (download buttons, the QR code) should
+ * use this instead of the local copy.
+ */
+export const RELEASE_APK_URL =
+  "https://github.com/Shubham-Ranaa/mahii-releases/releases/download/v1.4.6/MAHII-1.4.6-release.apk";
+
+/**
+ * Public GitHub Release asset that hosts the APK. NEXT_PUBLIC_MAHII_DOWNLOAD_URL
+ * overrides this — set it to the direct asset URL (the .apk file, not the
+ * release "tag" page) in Vercel and rebuild so it is baked into the client.
  */
 export const DOWNLOAD_URL: string =
-  process.env.NEXT_PUBLIC_MAHII_DOWNLOAD_URL?.trim() || `/${DOWNLOAD_FILE_NAME}`;
+  process.env.NEXT_PUBLIC_MAHII_DOWNLOAD_URL?.trim() || RELEASE_APK_URL;
 
 export const DOWNLOAD_SECTION_ID = "#download";
 
