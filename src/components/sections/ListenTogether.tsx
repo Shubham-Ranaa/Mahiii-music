@@ -151,6 +151,28 @@ export function ListenTogether() {
 
         {/* ---------------- Stage ---------------- */}
         <div className="mx-auto relative max-w-[68rem]">
+          {/* Orientation strip: what this scene is showing */}
+          <div
+            data-lt-copy
+            aria-hidden
+            className="mb-8 flex flex-wrap items-center justify-center gap-2 text-[0.6875rem] text-ink-muted"
+          >
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-1 w-1 rounded-full bg-violet-core" />
+              Room
+            </span>
+            <span className="text-ink-faint" aria-hidden>·</span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-1 w-1 rounded-full bg-lavender" />
+              People
+            </span>
+            <span className="text-ink-faint" aria-hidden>·</span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-1 w-1 rounded-full bg-emerald-400" />
+              Synced playback
+            </span>
+          </div>
+
           {/* Floating Emoji Reactions Layer */}
           <div className="pointer-events-none absolute inset-0 z-40 overflow-hidden">
             {reactions.map((r) => (
@@ -397,7 +419,10 @@ export function ListenTogether() {
             Your people. Your playlist. Your moments.
           </p>
           <p className="mt-2 text-center text-[0.75rem] text-ink-muted">
-            Tap avatars to see listener details · Tap emojis to send reactions in real-time
+            Tap an avatar for listener details · Tap an emoji to send a reaction
+          </p>
+          <p className="mt-2 text-center text-[0.6875rem] text-ink-muted/70">
+            Scene shows four listeners connected to one synchronized room
           </p>
         </div>
       </div>

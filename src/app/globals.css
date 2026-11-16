@@ -406,6 +406,164 @@
     );
     opacity: 0.2;
   }
+
+  .card-detail-reveal {
+    position: relative;
+    margin-top: 1.25rem;
+    border-top-width: 1px;
+    padding-top: 1rem;
+  }
+
+  @media (hover: hover) and (min-width: 640px) {
+    .premium-card {
+      transform: translate3d(0, 0, 0);
+      transform-origin: center;
+      transition:
+        transform 650ms var(--ease-out-expo),
+        filter 650ms ease;
+      will-change: transform;
+    }
+
+    .premium-card:hover,
+    .premium-card:focus-visible {
+      z-index: 20;
+      transform: translate3d(0, -8px, 0) scale(1.025);
+      filter: drop-shadow(0 26px 34px color-mix(in srgb, var(--card-glow) 45%, transparent));
+    }
+
+    .premium-card-surface {
+      transform: perspective(1000px) rotateX(0) rotateY(0);
+      transform-origin: center;
+      transition:
+        transform 700ms var(--ease-out-expo),
+        border-color 500ms ease,
+        box-shadow 700ms ease,
+        background-color 500ms ease;
+    }
+
+    .premium-card:hover .premium-card-surface,
+    .premium-card:focus-visible .premium-card-surface {
+      transform: perspective(1000px) rotateX(1deg) rotateY(-1deg);
+      border-color: color-mix(in srgb, var(--card-glow) 72%, white 8%);
+      box-shadow:
+        0 24px 70px -34px var(--card-glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .premium-card-surface::after {
+      position: absolute;
+      inset: -120% -50%;
+      z-index: 0;
+      pointer-events: none;
+      content: "";
+      background: linear-gradient(
+        115deg,
+        transparent 42%,
+        rgba(255, 255, 255, 0.08) 49%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.07) 51%,
+        transparent 58%
+      );
+      opacity: 0;
+      transform: translate3d(-38%, 0, 0) rotate(8deg);
+      transition:
+        transform 1100ms var(--ease-out-expo),
+        opacity 500ms ease;
+    }
+
+    .premium-card-accent {
+      opacity: 0;
+      transform: scaleX(0.35);
+      transform-origin: left center;
+      transition:
+        opacity 450ms ease,
+        transform 700ms var(--ease-out-expo);
+    }
+
+    .premium-card:hover .premium-card-surface::after,
+    .premium-card:focus-visible .premium-card-surface::after {
+      opacity: 1;
+      transform: translate3d(38%, 0, 0) rotate(8deg);
+    }
+
+    .premium-card:hover .premium-card-accent,
+    .premium-card:focus-visible .premium-card-accent {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+
+    .premium-card-surface svg {
+      transition:
+        transform 650ms var(--ease-out-expo),
+        filter 650ms ease;
+    }
+
+    .premium-card:hover .premium-card-surface svg,
+    .premium-card:focus-visible .premium-card-surface svg {
+      transform: rotate(-7deg) scale(1.1);
+      filter: drop-shadow(0 0 10px var(--card-glow));
+    }
+
+    .card-detail-reveal {
+      position: absolute;
+      inset-inline: 0.5rem;
+      bottom: 0.5rem;
+      margin-top: 0;
+      border-width: 1px;
+      border-radius: 0.75rem;
+      padding: 0.75rem;
+      opacity: 0;
+      transform: translateY(1.25rem) scale(0.94);
+      clip-path: inset(10% 4% 0 round 0.75rem);
+      -webkit-backdrop-filter: blur(18px);
+      backdrop-filter: blur(18px);
+      transition:
+        opacity 650ms var(--ease-out-expo),
+        transform 750ms var(--ease-out-expo),
+        clip-path 750ms var(--ease-out-expo),
+        box-shadow 500ms ease;
+    }
+
+    .group:hover .card-detail-reveal,
+    .group:focus-visible .card-detail-reveal {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      clip-path: inset(0 0 0 round 0.75rem);
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.45);
+    }
+
+    .card-detail-reveal > * {
+      opacity: 0;
+      transform: translateY(8px);
+      transition:
+        opacity 450ms var(--ease-out-expo),
+        transform 550ms var(--ease-out-expo);
+    }
+
+    .group:hover .card-detail-reveal > *,
+    .group:focus-visible .card-detail-reveal > * {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card-detail-reveal > :nth-child(1) {
+      transition-delay: 90ms;
+    }
+
+    .card-detail-reveal > :nth-child(2) {
+      transition-delay: 160ms;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .premium-card,
+    .premium-card-surface,
+    .premium-card-surface::after,
+    .card-detail-reveal {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
 }
 
 @layer utilities {
