@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { Music, AlignLeft, Sliders, Disc, Users, Sparkles, Link2 } from "lucide-react";
+import { useCallback, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, Music, AlignLeft, Sliders, Disc, Users, Link2 } from "lucide-react";
 import { gsap, useGSAP } from "@/animations/gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { SHOWCASE_SCREENS } from "@/lib/constants";
@@ -34,24 +34,29 @@ const SCREEN_ICONS: Record<string, React.ComponentType<{ size?: number; classNam
   spotify: Link2,
 };
 
+/**
+ * A swipeable filmstrip of the app's surfaces. Deliberately a different
+ * pattern from the Features section (tab list + sticky single device):
+ * here every screen is visible as a card you scroll through, so the two
+ * sections do not read as the same block repeated.
+ */
 export function AppShowcase() {
-  const [activeId, setActiveId] = useState(SHOWCASE_SCREENS[0].id);
+  const [activeIndex, setActiveIndex] = useState(0);
   const scope = useRef<HTMLElement>(null);
-  const screenRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
 
-  const active =
-    SHOWCASE_SCREENS.find((s) => s.id === activeId) ?? SHOWCASE_SCREENS[0];
-  const Screen = SCREEN_MAP[active.id] ?? NowPlayingScreen;
+  const total = SHOWCASE_SCREENS.length;
+  const active = SHOWCASE_SCREENS[activeIndex] ?? SHOWCASE_SCREENS[0];
 
-  /* Device entrance */
+  /* Entrance — cards rise in together with the copy */
   useGSAP(
     () => {
       if (!scope.current) return;
       const q = gsap.utils.selector(scope);
 
       if (reduced) {
-        gsap.set(q("[data-show-device], [data-show-copy]"), {
+        gsap.set(q("[data-show-copy], [data-show-device]"), {
           opacity: 1,
           y: 0,
           scale: 1,
@@ -62,7 +67,12 @@ export function AppShowcase() {
       }
 
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: scope.current, start: "top 68%", once: true },
+        scrollTrigger: {
+          trigger: scope.current,
+          start: "top 68%",
+          end: "bottom 68%",
+          toggleActions: "restart none restart none",
+        },
         defaults: { ease: "power3.out" },
       });
 
@@ -71,42 +81,51 @@ export function AppShowcase() {
         y: 25,
         duration: 0.8,
         stagger: 0.08,
-      })
-        .from(
-          q("[data-show-device]"),
-          {
-            opacity: 0,
-            y: 60,
-            scale: 0.88,
-            rotate: -3,
-            duration: 1.2,
-            ease: "expo.out",
-          },
-          0.12,
-        );
+      }).from(
+        q("[data-show-device]"),
+        {
+          opacity: 0,
+          y: 55,
+          scale: 0.94,
+          duration: 0.9,
+          stagger: 0.08,
+        },
+        0.12,
+      );
 
       return () => tl.kill();
     },
     { scope, dependencies: [reduced] },
   );
 
-  /* Screen transition on selection */
-  useGSAP(
-    () => {
-      if (!screenRef.current || reduced) return;
-      gsap.fromTo(
-        screenRef.current,
-        { opacity: 0, scale: 1.04, filter: "blur(8px)" },
-        {
-          opacity: 1,
-          scale: 1,
-          filter: "blur(0px)",
-          duration: 0.5,
-          ease: "power2.out",
-        },
-      );
+  const cards = useCallback(() => {
+    const track = trackRef.current;
+    return track ? (Array.from(track.children) as HTMLElement[]) : [];
+  }, []);
+
+  const onTrackScroll = useCallback(() => {
+    const track = trackRef.current;
+    const items = cards();
+    if (!track || items.length < 2) return;
+    const step = items[1].offsetLeft - items[0].offsetLeft;
+    if (!step) return;
+    const index = Math.round(track.scrollLeft / step);
+    setActiveIndex(Math.min(total - 1, Math.max(0, index)));
+  }, [cards, total]);
+
+  const goTo = useCallback(
+    (index: number) => {
+      const track = trackRef.current;
+      const items = cards();
+      if (!track || !items.length) return;
+      const next = Math.min(total - 1, Math.max(0, index));
+      track.scrollTo({
+        left: items[next].offsetLeft - items[0].offsetLeft,
+        behavior: reduced ? "auto" : "smooth",
+      });
+      setActiveIndex(next);
     },
-    { dependencies: [activeId, reduced] },
+    [cards, reduced, total],
   );
 
   return (
@@ -115,19 +134,19 @@ export function AppShowcase() {
       ref={scope}
       className="relative isolate overflow-hidden border-t border-white/[0.05] section-pad"
     >
-      {/* Dynamic ambient glow based on active screen */}
+      {/* Dynamic ambient glow based on the current screen */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 transition-all duration-700"
         style={{
           background:
-            activeId === "room"
+            active.id === "room"
               ? "radial-gradient(60% 50% at 50% 40%, rgba(168,85,247,0.2) 0%, transparent 70%)"
-              : activeId === "equalizer"
+              : active.id === "equalizer"
                 ? "radial-gradient(60% 50% at 50% 40%, rgba(34,211,238,0.14) 0%, transparent 70%)"
-                : activeId === "lyrics"
+                : active.id === "lyrics"
                   ? "radial-gradient(60% 50% at 50% 40%, rgba(244,114,182,0.12) 0%, transparent 70%)"
-                  : activeId === "spotify"
+                  : active.id === "spotify"
                     ? "radial-gradient(60% 50% at 50% 40%, rgba(29,185,84,0.16) 0%, transparent 70%)"
                     : "radial-gradient(60% 50% at 50% 40%, rgba(124,58,237,0.18) 0%, transparent 70%)",
         }}
@@ -135,167 +154,141 @@ export function AppShowcase() {
 
       <div className="shell relative">
         {/* Section header */}
-        <div className="mb-10 flex items-center gap-4 sm:mb-12 lg:mb-14">
-          <span className="type-eyebrow">05 — The App Surfaces</span>
+        <div className="mb-10 flex items-center gap-4 sm:mb-14">
+          <span data-show-copy className="type-eyebrow">05 — The App Surfaces</span>
           <span className="flex-1 hairline" />
         </div>
 
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.88fr)] lg:items-center lg:gap-16 xl:gap-24">
+        {/* Intro — kept brief; the gallery is the main event now */}
+        <div className="mb-10 grid gap-5 sm:mb-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.62fr)] lg:items-end lg:gap-16">
+          <h2 data-show-copy className="type-section max-w-[15ch]">
+            Designed for
+            <br />
+            <span className="text-gradient-violet">music lovers.</span>
+          </h2>
+          <p data-show-copy className="type-lede max-w-[44ch] lg:pb-2">
+            Six refined surfaces that cover how you listen — from full-bleed
+            album art to synchronized rooms and your own Spotify playlists.
+          </p>
+        </div>
+
+        {/* Gallery controls — above the filmstrip so they read first */}
+        <div data-show-copy className="mb-5 flex items-end justify-between gap-4">
           <div className="min-w-0">
-            <h2 data-show-copy className="type-section mb-5 max-w-[13ch]">
-              Designed for music lovers.
-            </h2>
-            <p data-show-copy className="type-lede mb-7 max-w-[42ch]">
-              Six refined surfaces that cover how you listen — from full-bleed
-              album art to real-time synchronized listening rooms, and a Spotify
-              connection that brings your own playlists along.
+            <p className="font-mono text-[0.625rem] uppercase tracking-[0.2em] text-ink-muted">
+              Now exploring
             </p>
-
-            {/* Mobile screen selector */}
-            <div
-              role="tablist"
-              aria-label="App screens"
-              className="mb-5 flex gap-2 overflow-x-auto no-scrollbar pb-1 lg:hidden"
-            >
-              {SHOWCASE_SCREENS.map((screen) => {
-                const Icon = SCREEN_ICONS[screen.id] ?? Music;
-                const isActive = screen.id === activeId;
-                return (
-                  <button
-                    key={screen.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={isActive}
-                    aria-controls="showcase-panel"
-                    onClick={() => setActiveId(screen.id)}
-                    className={cn(
-                      "flex min-h-10 shrink-0 items-center gap-2 rounded-full border px-3.5 text-xs font-medium transition-all duration-300",
-                      isActive
-                        ? "border-violet-core/60 bg-violet-core/15 text-ink shadow-[0_0_20px_rgba(168,85,247,0.18)]"
-                        : "border-white/[0.08] bg-white/[0.025] text-ink-muted hover:border-white/20 hover:text-ink",
-                    )}
-                  >
-                    <Icon
-                      size={14}
-                      className={isActive ? "text-lavender" : "text-ink-muted"}
-                    />
-                    <span>{screen.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Desktop screen selector */}
-            <div
-              role="tablist"
-              aria-label="App screens"
-              className="hidden grid-cols-2 gap-2 lg:grid"
-            >
-              {SHOWCASE_SCREENS.map((screen) => {
-                const isActive = screen.id === activeId;
-                const Icon = SCREEN_ICONS[screen.id] ?? Music;
-
-                return (
-                  <button
-                    key={screen.id}
-                    data-show-tab
-                    role="tab"
-                    type="button"
-                    aria-selected={isActive}
-                    aria-controls="showcase-panel"
-                    onClick={() => setActiveId(screen.id)}
-                    className={cn(
-                      "group relative flex min-h-[4.25rem] items-center gap-3 rounded-xl border px-3.5 py-3 text-left transition-all duration-300",
-                      isActive
-                        ? "border-violet-core/35 bg-violet-core/[0.08] text-ink shadow-[inset_0_0_24px_rgba(168,85,247,0.04)]"
-                        : "border-white/[0.06] bg-white/[0.015] text-ink-muted hover:border-white/15 hover:bg-white/[0.035] hover:text-ink-soft",
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-all duration-300",
-                        isActive
-                          ? "bg-violet-core text-white shadow-[0_0_16px_rgba(168,85,247,0.35)]"
-                          : "bg-white/[0.05] text-ink-muted group-hover:bg-white/10 group-hover:text-ink",
-                      )}
-                    >
-                      <Icon size={15} />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[0.8125rem] font-medium tracking-tight">
-                        {screen.label}
-                      </span>
-                      <span
-                        className={cn(
-                          "mt-0.5 block font-mono text-[0.5rem] tracking-[0.16em] uppercase transition-colors",
-                          isActive ? "text-violet-bright" : "text-ink-faint",
-                        )}
-                      >
-                        {screen.id === "room" || screen.id === "spotify"
-                          ? "CONNECTED"
-                          : "EXPLORE SCREEN"}
-                      </span>
-                    </span>
-                    <span className="sr-only">
-                      {isActive ? "Selected" : "Select"}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Selected screen details */}
-            <div
-              id="showcase-panel"
-              role="tabpanel"
-              aria-live="polite"
-              aria-label={`${active.title} preview`}
-              className="mt-4 rounded-xl border border-white/[0.07] bg-gradient-to-br from-white/[0.045] to-white/[0.015] p-4 backdrop-blur-sm sm:p-5"
-            >
-              <div className="flex items-center gap-2.5">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-violet-core/20 bg-violet-core/10 text-violet-bright">
-                  <Sparkles size={14} />
-                </span>
-                <div className="min-w-0">
-                  <p className="text-[0.6875rem] font-mono uppercase tracking-[0.16em] text-ink-muted">
-                    Now exploring
-                  </p>
-                  <p className="mt-0.5 truncate text-sm font-semibold text-ink">
-                    {active.title}
-                  </p>
-                </div>
-              </div>
-              <p className="mt-3 text-[0.8125rem] leading-relaxed text-ink-soft tracking-tight-body sm:text-sm">
-                {active.caption}
-              </p>
-            </div>
+            <p className="mt-1 truncate text-sm font-semibold text-ink sm:text-base">
+              {active.title}
+            </p>
           </div>
 
-          {/* Phone display */}
-          <div data-show-device className="flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-[300px] sm:max-w-[340px] lg:max-w-[380px]">
-              {/* Glow behind phone */}
-              <div
-                aria-hidden
-                className="absolute left-1/2 top-[42%] h-[75%] w-[90%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-core/20 blur-[90px] transition-all duration-700"
-              />
-              <div className="relative flex w-full items-center justify-center">
-                <PhoneMockup
-                  width={380}
-                  className="animate-float-soft shadow-[0_35px_100px_rgba(0,0,0,0.9)]"
-                  label="MAHII"
-                >
-                  <div ref={screenRef} className="h-full w-full">
-                    <Screen />
-                  </div>
-                </PhoneMockup>
-              </div>
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-[0.625rem] tracking-[0.16em] text-ink-muted">
+              {String(activeIndex + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+            </span>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => goTo(activeIndex - 1)}
+                disabled={activeIndex === 0}
+                aria-label="Previous screen"
+                className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-ink-soft transition-colors hover:border-violet-core/50 hover:text-ink disabled:opacity-30 disabled:hover:border-white/10 disabled:hover:text-ink-soft"
+              >
+                <ChevronLeft size={16} strokeWidth={2} />
+              </button>
+              <button
+                type="button"
+                onClick={() => goTo(activeIndex + 1)}
+                disabled={activeIndex === total - 1}
+                aria-label="Next screen"
+                className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-ink-soft transition-colors hover:border-violet-core/50 hover:text-ink disabled:opacity-30 disabled:hover:border-white/10 disabled:hover:text-ink-soft"
+              >
+                <ChevronRight size={16} strokeWidth={2} />
+              </button>
             </div>
           </div>
         </div>
 
+        {/* Filmstrip */}
+        <div
+          ref={trackRef}
+          onScroll={onTrackScroll}
+          role="group"
+          aria-label="MAHII app screens"
+          className="no-scrollbar -mx-[clamp(1.25rem,4vw,3.5rem)] flex snap-x snap-mandatory gap-4 overflow-x-auto px-[clamp(1.25rem,4vw,3.5rem)] pb-4 sm:gap-6"
+          style={{ scrollPaddingLeft: "clamp(1.25rem, 4vw, 3.5rem)" }}
+        >
+          {SHOWCASE_SCREENS.map((screen, index) => {
+            const Icon = SCREEN_ICONS[screen.id] ?? Music;
+            const Screen = SCREEN_MAP[screen.id] ?? NowPlayingScreen;
+            const isActive = index === activeIndex;
+
+            return (
+              <article
+                key={screen.id}
+                data-show-device
+                className={cn(
+                  "group w-[78vw] max-w-[300px] shrink-0 snap-start sm:w-[320px]",
+                  "rounded-2xl border p-3 transition-all duration-300 sm:p-4",
+                  isActive
+                    ? "border-violet-core/35 bg-white/[0.035] shadow-[0_0_40px_-18px_rgba(168,85,247,0.5)]"
+                    : "border-white/[0.06] bg-white/[0.015] hover:border-white/15",
+                )}
+              >
+                {/* Device */}
+                <div className="flex justify-center">
+                  <PhoneMockup width={260} glow={false} className="transition-transform duration-500 group-hover:-translate-y-1">
+                    <Screen />
+                  </PhoneMockup>
+                </div>
+
+                {/* Caption */}
+                <div className="px-1 pb-1 pt-5">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={cn(
+                        "flex h-7 w-7 items-center justify-center rounded-lg transition-colors",
+                        isActive
+                          ? "bg-violet-core/15 text-lavender"
+                          : "bg-white/[0.05] text-ink-muted",
+                      )}
+                    >
+                      <Icon size={14} aria-hidden />
+                    </span>
+                    <span className="font-mono text-[0.625rem] tracking-[0.16em] text-ink-muted">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                  </div>
+                  <h3 className="mt-3 text-sm font-semibold tracking-tight text-ink">
+                    {screen.title}
+                  </h3>
+                  <p className="mt-1 text-[0.75rem] leading-relaxed text-ink-soft">
+                    {screen.caption}
+                  </p>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        {/* Progress line */}
+        <div
+          role="progressbar"
+          aria-label="App screens progress"
+          aria-valuemin={1}
+          aria-valuemax={total}
+          aria-valuenow={activeIndex + 1}
+          className="mt-5 h-px w-full bg-white/[0.08]"
+        >
+          <div
+            className="h-px bg-gradient-to-r from-violet-core to-lavender transition-all duration-300"
+            style={{ width: `${((activeIndex + 1) / total) * 100}%` }}
+          />
+        </div>
+
         {/* Footnote */}
-        <p className="mt-8 text-center text-[0.6875rem] leading-relaxed text-ink-muted lg:mt-6 lg:text-left">
+        <p className="mt-8 text-center text-[0.6875rem] leading-relaxed text-ink-muted lg:text-left">
           Screens shown are interactive interface reconstructions built for this website, reflecting the core layout and typography of MAHII.
         </p>
       </div>
