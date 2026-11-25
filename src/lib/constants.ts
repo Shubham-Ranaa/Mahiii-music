@@ -1,7 +1,7 @@
 /**
  * Central content + configuration for the MAHII site.
- * Download URL is configurable: it points at the public GitHub Release
- * asset by default and can be overridden with an env var.
+ * The APK lives in `public/` and is served from this domain, so every
+ * download CTA points straight at it.
  */
 
 export const SITE = {
@@ -16,36 +16,26 @@ export const SITE = {
 export const APP_VERSION = "1.4.6";
 
 /**
- * The APK shipped as a public GitHub Release asset. Kept for the `download`
- * attribute — ignored by browsers for cross-origin links, so the name the
- * file actually arrives under is decided by the server.
+ * The APK shipped with the site in `public/MAHII.apk`. Kept as a constant so
+ * every CTA (and the QR code) uses the exact same filename and link.
  */
 export const DOWNLOAD_FILE_NAME = "MAHII.apk";
 
 /**
- * Public GitHub Release asset that hosts the APK. The APK is published as a
- * release asset on the public `mahii-releases` repo instead of living inside
- * `public/`. Anything that needs a stable URL (download buttons, the QR
- * code) uses this instead of a local copy.
+ * Local APK path. Serving it from our own domain means downloads work for
+ * everyone — no GitHub login, no cross-origin redirects, no stale release.
+ * Deliberately ignores NEXT_PUBLIC_MAHII_DOWNLOAD_URL so a leftover Vercel
+ * env var cannot silently send visitors to a dead link.
  */
-export const RELEASE_APK_URL =
-  "https://github.com/Shubham-Ranaa/mahii-releases/releases/download/v1.4.6/MAHII.apk";
-
-/**
- * Public GitHub Release asset that hosts the APK. NEXT_PUBLIC_MAHII_DOWNLOAD_URL
- * overrides this — set it to the direct asset URL (the .apk file, not the
- * release "tag" page) in Vercel and rebuild so it is baked into the client.
- */
-export const DOWNLOAD_URL: string =
-  process.env.NEXT_PUBLIC_MAHII_DOWNLOAD_URL?.trim() || RELEASE_APK_URL;
+export const DOWNLOAD_URL = `/${DOWNLOAD_FILE_NAME}`;
 
 export const DOWNLOAD_SECTION_ID = "#download";
 
 export const IS_EXTERNAL_DOWNLOAD = DOWNLOAD_URL.startsWith("http");
 
 /**
- * `download` attribute value for the download CTAs. Ignored by browsers for
- * cross-origin links, so it stays safe when DOWNLOAD_URL points elsewhere.
+ * `download` attribute value for the download CTAs. Same-origin, so browsers
+ * honour it and save the file as MAHII.apk.
  */
 export const DOWNLOAD_ATTR = DOWNLOAD_FILE_NAME;
 

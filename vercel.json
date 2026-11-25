@@ -1,19 +1,33 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "redirects": [
+  "headers": [
     {
       "source": "/MAHII.apk",
-      "destination": "https://github.com/Shubham-Ranaa/mahii-releases/releases/download/v1.4.6/MAHII.apk",
-      "permanent": false
-    },
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/vnd.android.package-archive"
+        },
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"MAHII.apk\""
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, s-maxage=86400, stale-while-revalidate=604800"
+        }
+      ]
+    }
+  ],
+  "redirects": [
     {
       "source": "/MAHII-1.4.6-release.apk",
-      "destination": "https://github.com/Shubham-Ranaa/mahii-releases/releases/download/v1.4.6/MAHII.apk",
+      "destination": "/MAHII.apk",
       "permanent": false
     },
     {
-      "source": "/download",
-      "destination": "https://github.com/Shubham-Ranaa/mahii-releases/releases/download/v1.4.6/MAHII.apk",
+      "source": "/download.apk",
+      "destination": "/MAHII.apk",
       "permanent": false
     }
   ]
