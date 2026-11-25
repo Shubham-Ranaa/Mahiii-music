@@ -1,131 +1,157 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Music, AlignLeft, Sliders, Disc, Users, Link2 } from "lucide-react";
+import { useRef, type ReactNode } from "react";
+import { ArrowUpRight } from "lucide-react";
 import { gsap, useGSAP } from "@/animations/gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { SHOWCASE_SCREENS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { PhoneMockup } from "@/components/ui/PhoneMockup";
-import {
-  NowPlayingScreen,
-  LyricsScreen,
-  EqualizerScreen,
-  LibraryScreen,
-  RoomScreen,
-  SpotifyScreen,
-} from "@/components/ui/AppScreens";
-
-const SCREEN_MAP: Record<string, () => React.JSX.Element> = {
-  "now-playing": NowPlayingScreen,
-  lyrics: LyricsScreen,
-  equalizer: EqualizerScreen,
-  library: LibraryScreen,
-  room: RoomScreen,
-  spotify: SpotifyScreen,
-};
-
-const SCREEN_ICONS: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
-  "now-playing": Music,
-  lyrics: AlignLeft,
-  equalizer: Sliders,
-  library: Disc,
-  room: Users,
-  spotify: Link2,
-};
 
 /**
- * A swipeable filmstrip of the app's surfaces. Deliberately a different
- * pattern from the Features section (tab list + sticky single device):
- * here every screen is visible as a card you scroll through, so the two
- * sections do not read as the same block repeated.
+ * Section 05 is deliberately about *listening moments*, not a feature list —
+ * section 03 already covers discovery, rooms, lyrics and the equalizer.
+ * The art here is CSS-built so the section reads as an editorial mosaic
+ * rather than another tabbed phone showcase.
  */
+const MOMENTS: Array<{
+  index: string;
+  kicker: string;
+  title: string;
+  copy: string;
+  art: ReactNode;
+  wide?: boolean;
+  accent: string;
+  glow: string;
+}> = [
+  {
+    index: "01",
+    kicker: "On the move",
+    title: "The morning commute",
+    copy: "The queue is ready before you are. Headphones in, screen down, and the playlist already knows the way.",
+    art: <WaveArt />,
+    wide: true,
+    accent: "text-violet-bright",
+    glow: "hover:shadow-[0_20px_60px_-24px_rgba(168,85,247,0.5)]",
+  },
+  {
+    index: "02",
+    kicker: "In the zone",
+    title: "Deep focus",
+    copy: "A steady stream that stays out of the way. Controls surface only when you reach for them.",
+    art: <FocusArt />,
+    accent: "text-cyan-300",
+    glow: "hover:shadow-[0_20px_60px_-24px_rgba(34,211,238,0.4)]",
+  },
+  {
+    index: "03",
+    kicker: "Winding down",
+    title: "Late night",
+    copy: "Low light, softer edges, and artwork that glows instead of shouting.",
+    art: <VinylArt />,
+    accent: "text-rose-300",
+    glow: "hover:shadow-[0_20px_60px_-24px_rgba(244,114,182,0.4)]",
+  },
+  {
+    index: "04",
+    kicker: "Full volume",
+    title: "The weekend drive",
+    copy: "Room to breathe — crisp highs, real bass and nothing between you and the record.",
+    art: <SpectrumArt />,
+    wide: true,
+    accent: "text-amber-300",
+    glow: "hover:shadow-[0_20px_60px_-24px_rgba(251,191,36,0.4)]",
+  },
+];
+
+function WaveArt() {
+  return (
+    <div className="absolute inset-0 flex items-end justify-center gap-1.5 opacity-30 sm:gap-2">
+      {Array.from({ length: 34 }).map((_, i) => (
+        <span
+          key={i}
+          className="w-1.5 animate-float-soft rounded-full bg-gradient-to-t from-violet-core/10 via-violet-core/40 to-lavender/70 sm:w-2"
+          style={{
+            height: `${18 + ((i * 37) % 70)}%`,
+            animationDelay: `${(i % 9) * 110}ms`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function FocusArt() {
+  return (
+    <div className="absolute inset-0 grid place-items-center opacity-40">
+      <div className="relative h-64 w-64">
+        {[0, 1, 2, 3].map((i) => (
+          <span
+            key={i}
+            className="absolute inset-0 rounded-full border border-violet-core/25"
+            style={{
+              transform: `scale(${1 - i * 0.22})`,
+              boxShadow: i === 0 ? "0 0 80px rgba(168,85,247,0.25)" : undefined,
+            }}
+          />
+        ))}
+        <span className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-lavender shadow-[0_0_25px_rgba(168,85,247,0.9)]" />
+      </div>
+    </div>
+  );
+}
+
+function VinylArt() {
+  return (
+    <div className="absolute inset-0 grid place-items-center opacity-40">
+      <div
+        className="h-64 w-64 animate-drift-glow rounded-full shadow-[0_0_90px_rgba(168,85,247,0.25)] sm:h-72 sm:w-72"
+        style={{
+          background:
+            "repeating-radial-gradient(circle at 50% 50%, rgba(226,212,240,0.16) 0px, rgba(226,212,240,0.16) 1px, transparent 1px, transparent 7px), radial-gradient(circle at 50% 50%, rgba(168,85,247,0.45) 0%, rgba(7,7,11,0.9) 62%)",
+        }}
+      >
+        <span className="block h-full w-full rounded-full" />
+      </div>
+    </div>
+  );
+}
+
+function SpectrumArt() {
+  return (
+    <div className="absolute inset-0 flex flex-col justify-center gap-2 opacity-30">
+      {Array.from({ length: 7 }).map((_, row) => (
+        <div key={row} className="flex items-center gap-2">
+          {Array.from({ length: 26 }).map((__, col) => (
+            <span
+              key={col}
+              className="h-1 flex-1 rounded-full bg-violet-bright/60"
+              style={{ opacity: 0.15 + (((row * 7 + col * 13) % 10) / 10) * 0.85 }}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function AppShowcase() {
-  const [activeIndex, setActiveIndex] = useState(0);
   const scope = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
 
-  const total = SHOWCASE_SCREENS.length;
-  const active = SHOWCASE_SCREENS[activeIndex] ?? SHOWCASE_SCREENS[0];
-
-  /* Entrance — cards rise in together with the copy */
+  /* Cards rise in on scroll. Transform-only and `once: true` — no opacity
+     keyframe, so a fast scroll can never leave the section looking empty. */
   useGSAP(
     () => {
-      if (!scope.current) return;
+      if (!scope.current || reduced) return;
       const q = gsap.utils.selector(scope);
-
-      if (reduced) {
-        gsap.set(q("[data-show-copy], [data-show-device]"), {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          rotate: 0,
-          clearProps: "transform",
-        });
-        return;
-      }
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: scope.current,
-          start: "top 68%",
-          end: "bottom 68%",
-          toggleActions: "restart none restart none",
-        },
-        defaults: { ease: "power3.out" },
-      });
-
-      tl.from(q("[data-show-copy]"), {
-        opacity: 0,
-        y: 25,
-        duration: 0.8,
+      gsap.from(q("[data-moment]"), {
+        y: 28,
+        duration: 0.7,
+        ease: "power3.out",
         stagger: 0.08,
-      }).from(
-        q("[data-show-device]"),
-        {
-          opacity: 0,
-          y: 55,
-          scale: 0.94,
-          duration: 0.9,
-          stagger: 0.08,
-        },
-        0.12,
-      );
-
-      return () => tl.kill();
+        scrollTrigger: { trigger: scope.current, start: "top 78%", once: true },
+      });
     },
     { scope, dependencies: [reduced] },
-  );
-
-  const cards = useCallback(() => {
-    const track = trackRef.current;
-    return track ? (Array.from(track.children) as HTMLElement[]) : [];
-  }, []);
-
-  const onTrackScroll = useCallback(() => {
-    const track = trackRef.current;
-    const items = cards();
-    if (!track || items.length < 2) return;
-    const step = items[1].offsetLeft - items[0].offsetLeft;
-    if (!step) return;
-    const index = Math.round(track.scrollLeft / step);
-    setActiveIndex(Math.min(total - 1, Math.max(0, index)));
-  }, [cards, total]);
-
-  const goTo = useCallback(
-    (index: number) => {
-      const track = trackRef.current;
-      const items = cards();
-      if (!track || !items.length) return;
-      const next = Math.min(total - 1, Math.max(0, index));
-      track.scrollTo({
-        left: items[next].offsetLeft - items[0].offsetLeft,
-        behavior: reduced ? "auto" : "smooth",
-      });
-      setActiveIndex(next);
-    },
-    [cards, reduced, total],
   );
 
   return (
@@ -134,162 +160,96 @@ export function AppShowcase() {
       ref={scope}
       className="relative isolate overflow-hidden border-t border-white/[0.05] section-pad"
     >
-      {/* Dynamic ambient glow based on the current screen */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 transition-all duration-700"
-        style={{
-          background:
-            active.id === "room"
-              ? "radial-gradient(60% 50% at 50% 40%, rgba(168,85,247,0.2) 0%, transparent 70%)"
-              : active.id === "equalizer"
-                ? "radial-gradient(60% 50% at 50% 40%, rgba(34,211,238,0.14) 0%, transparent 70%)"
-                : active.id === "lyrics"
-                  ? "radial-gradient(60% 50% at 50% 40%, rgba(244,114,182,0.12) 0%, transparent 70%)"
-                  : active.id === "spotify"
-                    ? "radial-gradient(60% 50% at 50% 40%, rgba(29,185,84,0.16) 0%, transparent 70%)"
-                    : "radial-gradient(60% 50% at 50% 40%, rgba(124,58,237,0.18) 0%, transparent 70%)",
-        }}
-      />
+      {/* Ambient field */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        <div
+          className="absolute left-1/2 top-1/2 h-[70vh] w-[70vh] -translate-x-1/2 -translate-y-1/2 animate-drift-glow rounded-full blur-[140px]"
+          style={{
+            background:
+              "radial-gradient(50% 50% at 50% 50%, rgba(124,58,237,0.16) 0%, transparent 70%)",
+          }}
+        />
+      </div>
 
       <div className="shell relative">
         {/* Section header */}
         <div className="mb-10 flex items-center gap-4 sm:mb-14">
-          <span data-show-copy className="type-eyebrow">05 — The App Surfaces</span>
+          <span className="type-eyebrow">05 — In the Moment</span>
           <span className="flex-1 hairline" />
         </div>
 
-        {/* Intro — kept brief; the gallery is the main event now */}
-        <div className="mb-10 grid gap-5 sm:mb-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.62fr)] lg:items-end lg:gap-16">
-          <h2 data-show-copy className="type-section max-w-[15ch]">
-            Designed for
+        {/* Intro */}
+        <div className="mb-10 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.62fr)] lg:items-end lg:gap-16">
+          <h2 className="type-section max-w-[15ch]">
+            Made for the
             <br />
-            <span className="text-gradient-violet">music lovers.</span>
+            <span className="text-gradient-violet">moment.</span>
           </h2>
-          <p data-show-copy className="type-lede max-w-[44ch] lg:pb-2">
-            Six refined surfaces that cover how you listen — from full-bleed
-            album art to synchronized rooms and your own Spotify playlists.
+          <p className="type-lede max-w-[44ch] lg:pb-2">
+            Four ways a day sounds. MAHII fits the room, the pace and the
+            mood — not the other way around.
           </p>
         </div>
 
-        {/* Gallery controls — above the filmstrip so they read first */}
-        <div data-show-copy className="mb-5 flex items-end justify-between gap-4">
-          <div className="min-w-0">
-            <p className="font-mono text-[0.625rem] uppercase tracking-[0.2em] text-ink-muted">
-              Now exploring
-            </p>
-            <p className="mt-1 truncate text-sm font-semibold text-ink sm:text-base">
-              {active.title}
-            </p>
-          </div>
+        {/* Moments mosaic */}
+        <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
+          {MOMENTS.map((moment) => (
+            <article
+              key={moment.index}
+              data-moment
+              className={cn(
+                "group relative isolate flex min-h-[19rem] flex-col justify-between overflow-hidden rounded-2xl border border-white/[0.07] bg-gradient-to-b from-white/[0.035] to-white/[0.01] p-6 transition-all duration-300 hover:-translate-y-1 sm:p-8",
+                "hover:border-violet-core/30",
+                moment.glow,
+                moment.wide && "sm:col-span-2 sm:min-h-[16rem]",
+              )}
+            >
+              {/* Art */}
+              <div className="absolute inset-0 -z-10 transition-transform duration-700 group-hover:scale-105">
+                {moment.art}
+              </div>
+              <div
+                aria-hidden
+                className="absolute inset-0 -z-10 bg-gradient-to-t from-[#08080d] via-[#08080d]/70 to-transparent"
+              />
 
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-[0.625rem] tracking-[0.16em] text-ink-muted">
-              {String(activeIndex + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-            </span>
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => goTo(activeIndex - 1)}
-                disabled={activeIndex === 0}
-                aria-label="Previous screen"
-                className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-ink-soft transition-colors hover:border-violet-core/50 hover:text-ink disabled:opacity-30 disabled:hover:border-white/10 disabled:hover:text-ink-soft"
-              >
-                <ChevronLeft size={16} strokeWidth={2} />
-              </button>
-              <button
-                type="button"
-                onClick={() => goTo(activeIndex + 1)}
-                disabled={activeIndex === total - 1}
-                aria-label="Next screen"
-                className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-ink-soft transition-colors hover:border-violet-core/50 hover:text-ink disabled:opacity-30 disabled:hover:border-white/10 disabled:hover:text-ink-soft"
-              >
-                <ChevronRight size={16} strokeWidth={2} />
-              </button>
-            </div>
-          </div>
+              {/* Top row: index + arrow affordance */}
+              <div className="flex items-start justify-between gap-4">
+                <span
+                  className={cn(
+                    "font-mono text-[0.625rem] uppercase tracking-[0.2em]",
+                    moment.accent,
+                  )}
+                >
+                  {moment.index} · {moment.kicker}
+                </span>
+                <span
+                  aria-hidden
+                  className="grid h-8 w-8 place-items-center rounded-full border border-white/10 text-ink-muted transition-all duration-300 group-hover:border-violet-core/40 group-hover:text-lavender"
+                >
+                  <ArrowUpRight
+                    size={14}
+                    strokeWidth={1.75}
+                    className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  />
+                </span>
+              </div>
+
+              {/* Copy */}
+              <div className={cn("max-w-[42ch]", moment.wide && "sm:max-w-[50ch]")}>
+                <h3 className="text-xl font-semibold tracking-tight text-ink sm:text-2xl">
+                  {moment.title}
+                </h3>
+                <p className="mt-2 text-[0.875rem] leading-relaxed text-ink-soft">
+                  {moment.copy}
+                </p>
+              </div>
+            </article>
+          ))}
         </div>
 
-        {/* Filmstrip */}
-        <div
-          ref={trackRef}
-          onScroll={onTrackScroll}
-          role="group"
-          aria-label="MAHII app screens"
-          className="no-scrollbar -mx-[clamp(1.25rem,4vw,3.5rem)] flex snap-x snap-mandatory gap-4 overflow-x-auto px-[clamp(1.25rem,4vw,3.5rem)] pb-4 sm:gap-6"
-          style={{ scrollPaddingLeft: "clamp(1.25rem, 4vw, 3.5rem)" }}
-        >
-          {SHOWCASE_SCREENS.map((screen, index) => {
-            const Icon = SCREEN_ICONS[screen.id] ?? Music;
-            const Screen = SCREEN_MAP[screen.id] ?? NowPlayingScreen;
-            const isActive = index === activeIndex;
-
-            return (
-              <article
-                key={screen.id}
-                data-show-device
-                className={cn(
-                  "group w-[78vw] max-w-[300px] shrink-0 snap-start sm:w-[320px]",
-                  "rounded-2xl border p-3 transition-all duration-300 sm:p-4",
-                  isActive
-                    ? "border-violet-core/35 bg-white/[0.035] shadow-[0_0_40px_-18px_rgba(168,85,247,0.5)]"
-                    : "border-white/[0.06] bg-white/[0.015] hover:border-white/15",
-                )}
-              >
-                {/* Device */}
-                <div className="flex justify-center">
-                  <PhoneMockup width={260} glow={false} className="transition-transform duration-500 group-hover:-translate-y-1">
-                    <Screen />
-                  </PhoneMockup>
-                </div>
-
-                {/* Caption */}
-                <div className="px-1 pb-1 pt-5">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={cn(
-                        "flex h-7 w-7 items-center justify-center rounded-lg transition-colors",
-                        isActive
-                          ? "bg-violet-core/15 text-lavender"
-                          : "bg-white/[0.05] text-ink-muted",
-                      )}
-                    >
-                      <Icon size={14} aria-hidden />
-                    </span>
-                    <span className="font-mono text-[0.625rem] tracking-[0.16em] text-ink-muted">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                  </div>
-                  <h3 className="mt-3 text-sm font-semibold tracking-tight text-ink">
-                    {screen.title}
-                  </h3>
-                  <p className="mt-1 text-[0.75rem] leading-relaxed text-ink-soft">
-                    {screen.caption}
-                  </p>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-
-        {/* Progress line */}
-        <div
-          role="progressbar"
-          aria-label="App screens progress"
-          aria-valuemin={1}
-          aria-valuemax={total}
-          aria-valuenow={activeIndex + 1}
-          className="mt-5 h-px w-full bg-white/[0.08]"
-        >
-          <div
-            className="h-px bg-gradient-to-r from-violet-core to-lavender transition-all duration-300"
-            style={{ width: `${((activeIndex + 1) / total) * 100}%` }}
-          />
-        </div>
-
-        {/* Footnote */}
         <p className="mt-8 text-center text-[0.6875rem] leading-relaxed text-ink-muted lg:text-left">
-          Screens shown are interactive interface reconstructions built for this website, reflecting the core layout and typography of MAHII.
+          A visual study of how MAHII feels in use — built for this website, not captured from the app.
         </p>
       </div>
     </section>
